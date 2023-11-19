@@ -1,14 +1,12 @@
 mod record;
 
 use std::sync::Arc;
-
 use aide::{
     axum::ApiRouter,
     openapi::OpenApi,
     transform::TransformOpenApi,
 };
 use aide::axum::routing::get;
-
 use axum::Extension;
 use axum::response::Html;
 
