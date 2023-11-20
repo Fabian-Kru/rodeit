@@ -6,7 +6,7 @@ use axum::Json;
 use schemars::JsonSchema;
 use serde::Serialize;
 
-pub fn router() -> ApiRouter {
+pub fn create_router() -> ApiRouter {
 	ApiRouter::new().api_route(
 		"/",
 		get_with(bucket_lists, bucket_lists_docs)
