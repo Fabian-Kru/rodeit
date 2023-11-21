@@ -10,3 +10,6 @@ target/
 
 # Node
 node_modules/
+
+# Embedded Databases
+*.db
