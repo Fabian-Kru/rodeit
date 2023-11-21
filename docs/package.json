@@ -1,0 +1,9 @@
+{
+	"name": "@rodeit/docs",
+	"version": "0.1.0",
+	"description": "",
+	"scripts": {},
+	"devDependencies": {
+		"prettier": "^3.1.0"
+	}
+}

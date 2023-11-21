@@ -1,7 +1,12 @@
-# JetBrains
+# JetBrains IDEs
 .idea
+
+# Visual Studio Code
+.vscode
 
 # Rust
 debug/
 target/
 
+# Node
+node_modules/
