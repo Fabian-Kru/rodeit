@@ -475,10 +475,12 @@ dependencies = [
  "aide",
  "anyhow",
  "axum",
+ "captain_coaster",
  "reqwest",
  "schemars",
  "serde",
  "serde_json",
+ "serde_with",
  "surrealdb",
  "tokio",
 ]
@@ -538,6 +540,18 @@ dependencies = [
  "cc",
  "libc",
  "pkg-config",
+]
+
+[[package]]
+name = "captain_coaster"
+version = "1.0.1"
+dependencies = [
+ "reqwest",
+ "serde",
+ "serde_derive",
+ "serde_json",
+ "url",
+ "uuid",
 ]
 
 [[package]]
