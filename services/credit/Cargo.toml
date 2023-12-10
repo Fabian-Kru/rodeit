@@ -15,4 +15,5 @@ chrono = "0.4.31"
 serde = "1.0.192"
 tokio = { version = "1.34.0", features = ["full"] }
 schemars = { version = "0.8.10", features = ["uuid1"] }
+sqlite = { version = "0.32.0" }
 uuid = { version = "1.5.0", features = ["v4"] }
