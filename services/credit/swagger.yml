@@ -9,6 +9,17 @@ servers:
   - url: "/"
 
 components:
+  schemas:
+    Credit:
+      type: "object"
+      required:
+        - user_id
+        - rollercoaster_id
+      properties:
+        user_id:
+          type: "integer"
+        rollercoaster_id:
+          type: "integer"
   parameters:
     credit_id:
       name: "credit_id"
@@ -56,3 +67,17 @@ paths:
           description: ""
         "404":
           description: "not found"
+  /submit:
+    post:
+      operationId: "credit.submit"
+      requestBody:
+          description: ""
+          required: True
+          content:
+            application/json:
+              schema:
+                x-body-name: "credit"
+                $ref: "#/components/schemas/Credit"
+      responses:
+        "201":
+          description: ""

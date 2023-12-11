@@ -20,3 +20,4 @@ class CreditSchema(marshmallow.SQLAlchemyAutoSchema):
 
 
 credit_schema = CreditSchema(many=True)
+credit_schema_single = CreditSchema()
