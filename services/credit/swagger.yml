@@ -16,6 +16,12 @@ components:
       required: True
       schema:
         type: "integer"
+    user_id:
+      name: "user_id"
+      in: path
+      required: True
+      schema:
+        type: "integer"
 
 paths:
   "/":
@@ -24,17 +30,27 @@ paths:
       responses:
         "200":
           description: ""
-  /all:
+  /getAll:
     get:
       operationId: "credit.get_all"
       responses:
         "200":
           description: ""
-  /get/{credit_id}:
+  /getById/{credit_id}:
+    get:
+      operationId: "credit.get_by_id"
+      parameters:
+        - $ref: "#/components/parameters/credit_id"
+      responses:
+        "200":
+          description: ""
+        "404":
+          description: "not found"
+  /get/{user_id}:
     get:
       operationId: "credit.get"
       parameters:
-        - $ref: "#/components/parameters/credit_id"
+        - $ref: "#/components/parameters/user_id"
       responses:
         "200":
           description: ""
