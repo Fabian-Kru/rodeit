@@ -2,8 +2,8 @@ from datetime import datetime
 from config import db, marshmallow
 
 
-class Credit(db.Model):
-    __tablename__ = "credit"
+class Record(db.Model):
+    __tablename__ = "records"
     id = db.Column(db.Integer, primary_key=True, unique=True)
     user_id = db.Column(db.String(32))
     rollercoaster_id = db.Column(db.Integer)
@@ -12,12 +12,11 @@ class Credit(db.Model):
     )
 
 
-class CreditSchema(marshmallow.SQLAlchemyAutoSchema):
+class RecordSchema(marshmallow.SQLAlchemyAutoSchema):
     class Meta:
-        model = Credit
+        model = Record
         load_instance = True
         sqla_session = db.session
 
 
-credit_schema = CreditSchema(many=True)
-credit_schema_single = CreditSchema()
+record_schema = RecordSchema(many=True)
