@@ -17,4 +17,5 @@ surrealdb = { version = "1.0.0", features = ["kv-rocksdb"] }
 tokio = { version = "1.34.0", features = ["full"] }
 captain_coaster = { version = "1.0.1", path = "../../packages/captain_coaster"}
 serde_with = "3.4.0"
+futures = "0.3.29"
 

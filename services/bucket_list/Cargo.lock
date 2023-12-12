@@ -476,6 +476,7 @@ dependencies = [
  "anyhow",
  "axum",
  "captain_coaster",
+ "futures",
  "reqwest",
  "schemars",
  "serde",
