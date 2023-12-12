@@ -10,7 +10,7 @@ servers:
 
 components:
   schemas:
-    Credit:
+    Record:
       type: "object"
       required:
         - user_id
@@ -21,8 +21,8 @@ components:
         rollercoaster_id:
           type: "integer"
   parameters:
-    credit_id:
-      name: "credit_id"
+    record_id:
+      name: "record_id"
       in: path
       required: True
       schema:
@@ -37,21 +37,21 @@ components:
 paths:
   "/":
     get:
-      operationId: "credit.main"
+      operationId: "record.main"
       responses:
         "200":
           description: ""
   /getAll:
     get:
-      operationId: "credit.get_all"
+      operationId: "record.get_all"
       responses:
         "200":
           description: ""
-  /getById/{credit_id}:
+  /getById/{record_id}:
     get:
-      operationId: "credit.get_by_id"
+      operationId: "record.get_by_id"
       parameters:
-        - $ref: "#/components/parameters/credit_id"
+        - $ref: "#/components/parameters/record_id"
       responses:
         "200":
           description: ""
@@ -59,7 +59,7 @@ paths:
           description: "not found"
   /get/{user_id}:
     get:
-      operationId: "credit.get"
+      operationId: "record.get"
       parameters:
         - $ref: "#/components/parameters/user_id"
       responses:
@@ -69,7 +69,7 @@ paths:
           description: "not found"
   /submit:
     post:
-      operationId: "credit.submit"
+      operationId: "record.submit"
       requestBody:
           description: ""
           required: True
@@ -77,7 +77,7 @@ paths:
             application/json:
               schema:
                 x-body-name: "credit"
-                $ref: "#/components/schemas/Credit"
+                $ref: "#/components/schemas/Record"
       responses:
         "201":
           description: ""
