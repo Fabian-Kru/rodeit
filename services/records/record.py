@@ -1,7 +1,7 @@
 import json
 
 from flask import abort
-from models import Record, record_schema
+from models import Record, record_schema, record_schema_single
 from config import db
 
 
@@ -39,7 +39,7 @@ def submit(body: dict):
         "user_id": str(user_id),
         "rollercoaster_id": str(rollercoaster_id),
     }
-    entry = record_schema.loads(json.dumps(new_entry))
+    entry = record_schema_single.loads(json.dumps(new_entry))
     db.session.add(entry)
     db.session.commit()
-    return record_schema.dump(entry), 201
+    return record_schema_single.dump(entry), 201

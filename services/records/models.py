@@ -20,3 +20,4 @@ class RecordSchema(marshmallow.SQLAlchemyAutoSchema):
 
 
 record_schema = RecordSchema(many=True)
+record_schema_single = RecordSchema()
