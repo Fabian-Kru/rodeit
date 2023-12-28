@@ -1,15 +1,29 @@
 [package]
 name = "captain_coaster"
-version = "1.0.1"
-description = "Captain Coaster API"
-license = "MIT"
+version = "0.1.0"
+authors = ["Emanuel Pilz <emonadeo@gmail.com>"]
 edition = "2018"
 
-[dependencies]
-serde = "^1.0"
-serde_derive = "^1.0"
-serde_json = "^1.0"
-url = "^2.2"
-uuid = { version = "^1.0", features = ["serde", "v4"] }
-reqwest = { version = "^0.11", features = ["json", "multipart"] }
+[lib]
+path = "lib.rs"
 
+[dependencies]
+async-trait = "0.1"
+bytes = "1.5"
+thiserror = "1.0"
+futures = "0.3"
+http = "0.2"
+lazy_static = "1.4"
+log = "0.4"
+mime = { git = "https://github.com/hyperium/mime.git"}
+mime_guess = "2.0"
+serde = { version = "1.0", features = ["derive"] }
+serde_json = "1.0"
+serde_yaml = "0.9"
+tokio-util = { version = "0.7", features = ["codec"] }
+url = "2.5"
+
+tokio = { version = "1.35", features = ["fs", "io-util"] }
+reqwest = { version = "0.11", features = ["stream", "json", "multipart"] }
+
+[workspace]

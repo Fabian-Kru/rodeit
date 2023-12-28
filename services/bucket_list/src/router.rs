@@ -13,7 +13,7 @@ use axum::{
 	http::StatusCode,
 	Json,
 };
-use captain_coaster::apis::coaster_api;
+use captain_coaster::{client::Sendable, coaster_read_coaster::CoasterReadCoaster};
 use futures::future::join_all;
 use schemars::JsonSchema;
 use serde::{Deserialize, Serialize};
@@ -91,33 +91,42 @@ async fn find_coasters_by_user_id(
 		.ok_or(StatusCode::NOT_FOUND)?;
 
 	let coasters = bucket_list.coaster_ids.iter().map(|coaster_id| async {
-		let raw_coaster =
-			coaster_api::get_coaster_item(&state.captain_coaster_config, &coaster_id.to_string())
-				.await
-				.unwrap();
+		let raw_coaster = CoasterReadCoaster::get_coaster_item()
+			.id(coaster_id.to_string())
+			.send(&state.cc_client)
+			.await
+			.or(Err(StatusCode::INTERNAL_SERVER_ERROR))?;
 
-		return Coaster {
+		return Ok::<Coaster, StatusCode>(Coaster {
 			id: *coaster_id,
-			name: raw_coaster.name,
+			name: raw_coaster.name.clone(),
 			speed: raw_coaster.speed.and_then(|speed| Some(speed as u32)),
 			height: raw_coaster.height.and_then(|height| Some(height as u32)),
 			inversions: raw_coaster
 				.inversions_number
 				.and_then(|inversions| Some(inversions as u32)),
-			manufacturer: raw_coaster.manufacturer.map(|manufacturer| Manufacturer {
-				id: 0u32, // TODO: get manufacturer id
-				name: manufacturer.name.unwrap(),
-			}),
-			park: raw_coaster.park.map(|park| Park {
+			manufacturer: raw_coaster
+				.manufacturer
+				.clone()
+				.map(|manufacturer| Manufacturer {
+					id: 0u32, // TODO: get manufacturer id
+					name: manufacturer.name.unwrap(),
+				}),
+			park: raw_coaster.park.clone().map(|park| Park {
 				id: 0u32, // TODO: get manufacturer id
 				name: park.name.unwrap(),
-				country: park.country.unwrap().name.unwrap(), // TODO: unwrap city
+				country: park.country.unwrap().name.unwrap(), // TODO: unwrap country
 			}),
-			image: raw_coaster.main_image.unwrap().path,
-		};
+			image: raw_coaster.main_image.clone().unwrap().path,
+		});
 	});
 
-	return Ok(Json(join_all(coasters).await));
+	return Ok(Json(
+		join_all(coasters)
+			.await
+			.into_iter()
+			.collect::<Result<Vec<_>, StatusCode>>()?,
+	));
 }
 
 fn docs_find_coasters_by_user_id(operation: TransformOperation) -> TransformOperation {

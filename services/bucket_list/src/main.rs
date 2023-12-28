@@ -1,6 +1,8 @@
 use std::{env::current_dir, sync::Arc};
 
 use anyhow::{Ok, Result};
+use reqwest::header::HeaderValue;
+use reqwest::Client;
 use router::create_router;
 use surrealdb::Surreal;
 
@@ -8,7 +10,7 @@ pub mod router;
 
 pub struct AppState {
 	store: Surreal<surrealdb::engine::local::Db>,
-	captain_coaster_config: captain_coaster::apis::configuration::Configuration,
+	cc_client: Client,
 }
 
 const DATABASE_FILENAME: &str = "bucket_list.db";
@@ -21,30 +23,19 @@ async fn main() -> Result<()> {
 		.await?;
 	db.use_ns(DATABASE_NAMESPACE).use_db(DATABASE_NAME).await?;
 
-	let mut captain_coaster_default_headers = reqwest::header::HeaderMap::new();
-	captain_coaster_default_headers.insert(
-		"Accept",
-		reqwest::header::HeaderValue::from_static("application/json"),
+	let mut cc_default_headers = reqwest::header::HeaderMap::new();
+	cc_default_headers.insert("Accept", HeaderValue::from_static("application/json"));
+	cc_default_headers.insert(
+		"Authorization",
+		HeaderValue::from_static("Bearer ee2d7ceb-eabe-4583-8b58-be70ff1ab79e"),
 	);
 
-	let captain_coaster_config = captain_coaster::apis::configuration::Configuration {
-		client: reqwest::ClientBuilder::new()
-			.default_headers(captain_coaster_default_headers)
-			.build()?,
-		base_path: "https://captaincoaster.com".into(),
-		user_agent: Some("HTTPie/3.2.2".into()),
-		basic_auth: None,
-		oauth_access_token: None,
-		bearer_access_token: None,
-		api_key: Some(captain_coaster::apis::configuration::ApiKey {
-			prefix: Some("Bearer".into()),
-			key: ("ee2d7ceb-eabe-4583-8b58-be70ff1ab79e".into()),
-		}),
-	};
-
+	let cc_client = Client::builder()
+		.default_headers(cc_default_headers)
+		.build()?;
 	let app_state = Arc::new(AppState {
 		store: db,
-		captain_coaster_config,
+		cc_client,
 	});
 
 	axum::Server::bind(&"0.0.0.0:3000".parse().unwrap())
