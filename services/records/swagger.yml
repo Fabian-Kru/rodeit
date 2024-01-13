@@ -2,7 +2,7 @@
 
 openapi: 3.0.0
 info:
-  title: "Credit API"
+  title: "Record API"
   version: "1.0.1"
 
 servers:
@@ -47,7 +47,7 @@ paths:
       responses:
         "200":
           description: ""
-  /getById/{record_id}:
+  /record/id/{record_id}:
     get:
       operationId: "record.get_by_id"
       parameters:
@@ -57,7 +57,7 @@ paths:
           description: ""
         "404":
           description: "not found"
-  /get/{user_id}:
+  /user/{user_id}:
     get:
       operationId: "record.get"
       parameters:
@@ -67,7 +67,7 @@ paths:
           description: ""
         "404":
           description: "not found"
-  /submit:
+  /record:
     post:
       operationId: "record.submit"
       requestBody:
@@ -76,7 +76,7 @@ paths:
           content:
             application/json:
               schema:
-                x-body-name: "credit"
+                x-body-name: "record"
                 $ref: "#/components/schemas/Record"
       responses:
         "201":
