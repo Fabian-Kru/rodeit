@@ -62,7 +62,25 @@ paths:
           description: "Access token is missing or invalid"
       security:
         - jwt: [ 'Bearer' ]
-  /record/id/{record_id}:
+  /record:
+    post:
+      operationId: "record.submit"
+      requestBody:
+          description: ""
+          required: True
+          content:
+            application/json:
+              schema:
+                x-body-name: "record"
+                $ref: "#/components/schemas/Record"
+      responses:
+        "201":
+          description: ""
+        '401':
+          description: "Access token is missing or invalid"
+      security:
+        - jwt: [ 'Bearer' ]
+  /record/{record_id}:
     get:
       operationId: "record.get_by_id"
       parameters:
@@ -88,24 +106,6 @@ paths:
           description: "Access token is missing or invalid"
         "404":
           description: "Not found"
-      security:
-        - jwt: [ 'Bearer' ]
-  /record:
-    post:
-      operationId: "record.submit"
-      requestBody:
-          description: ""
-          required: True
-          content:
-            application/json:
-              schema:
-                x-body-name: "record"
-                $ref: "#/components/schemas/Record"
-      responses:
-        "201":
-          description: ""
-        '401':
-          description: "Access token is missing or invalid"
       security:
         - jwt: [ 'Bearer' ]
   /rollercoaster/{rollercoaster_id}:
