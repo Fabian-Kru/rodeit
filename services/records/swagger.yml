@@ -39,6 +39,12 @@ components:
       required: True
       schema:
         type: "integer"
+  securitySchemes:
+    jwt:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+      x-bearerInfoFunc: api.decode_token
 paths:
   "/":
     get:
@@ -52,6 +58,8 @@ paths:
       responses:
         "200":
           description: "Delete me"
+      security:
+        - jwt: [ 'Bearer' ]
   /record/id/{record_id}:
     get:
       operationId: "record.get_by_id"
@@ -62,6 +70,8 @@ paths:
           description: ""
         "404":
           description: "not found"
+      security:
+        - jwt: [ 'Bearer' ]
   /user/{user_id}:
     get:
       operationId: "record.get"
@@ -72,6 +82,8 @@ paths:
           description: ""
         "404":
           description: "not found"
+      security:
+        - jwt: [ 'Bearer' ]
   /record:
     post:
       operationId: "record.submit"
@@ -86,6 +98,8 @@ paths:
       responses:
         "201":
           description: ""
+      security:
+        - jwt: [ 'Bearer' ]
   /rollercoaster/{rollercoaster_id}:
     get:
       operationId: "record.get_by_rollercoaster"
@@ -96,3 +110,5 @@ paths:
           description: ""
         "404":
           description: "not found"
+      security:
+        - jwt: [ 'Bearer' ]
