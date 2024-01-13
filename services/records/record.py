@@ -28,7 +28,7 @@ def get_by_id(record_id: int, token_info):
         abort(404, "Not found")
 
 
-def get(user_id: int, token_info):
+def get_by_user(user_id: int, token_info):
     if not token_info:
         abort(401, "Not authorized")
 

@@ -96,7 +96,7 @@ paths:
         - jwt: [ 'Bearer' ]
   /user/{user_id}:
     get:
-      operationId: "record.get"
+      operationId: "record.get_by_user"
       parameters:
         - $ref: "#/components/parameters/user_id"
       responses:
