@@ -58,6 +58,8 @@ paths:
       responses:
         "200":
           description: "Delete me"
+        '401':
+          description: "Access token is missing or invalid"
       security:
         - jwt: [ 'Bearer' ]
   /record/id/{record_id}:
@@ -68,8 +70,10 @@ paths:
       responses:
         "200":
           description: ""
+        '401':
+          description: "Access token is missing or invalid"
         "404":
-          description: "not found"
+          description: "Not found"
       security:
         - jwt: [ 'Bearer' ]
   /user/{user_id}:
@@ -80,8 +84,10 @@ paths:
       responses:
         "200":
           description: ""
+        '401':
+          description: "Access token is missing or invalid"
         "404":
-          description: "not found"
+          description: "Not found"
       security:
         - jwt: [ 'Bearer' ]
   /record:
@@ -98,6 +104,8 @@ paths:
       responses:
         "201":
           description: ""
+        '401':
+          description: "Access token is missing or invalid"
       security:
         - jwt: [ 'Bearer' ]
   /rollercoaster/{rollercoaster_id}:
@@ -108,7 +116,9 @@ paths:
       responses:
         "200":
           description: ""
+        '401':
+          description: "Access token is missing or invalid"
         "404":
-          description: "not found"
+          description: "Not found"
       security:
         - jwt: [ 'Bearer' ]
