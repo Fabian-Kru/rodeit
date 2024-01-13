@@ -33,7 +33,12 @@ components:
       required: True
       schema:
         type: "integer"
-
+    rollercoaster_id:
+      name: "rollercoaster_id"
+      in: path
+      required: True
+      schema:
+        type: "integer"
 paths:
   "/":
     get:
@@ -46,7 +51,7 @@ paths:
       operationId: "record.get_all"
       responses:
         "200":
-          description: ""
+          description: "Delete me"
   /record/id/{record_id}:
     get:
       operationId: "record.get_by_id"
@@ -81,3 +86,13 @@ paths:
       responses:
         "201":
           description: ""
+  /rollercoaster/{rollercoaster_id}:
+    get:
+      operationId: "record.get_by_rollercoaster"
+      parameters:
+        - $ref: "#/components/parameters/rollercoaster_id"
+      responses:
+        "200":
+          description: ""
+        "404":
+          description: "not found"

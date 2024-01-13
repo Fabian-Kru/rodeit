@@ -30,6 +30,14 @@ def get(user_id: int):
         abort(404, f"Not found")
 
 
+def get_by_rollercoaster(rollercoaster_id: int):
+    res = Record.query.filter(Record.rollercoaster_id == rollercoaster_id).one_or_none()
+    if res is not None:
+        return record_schema.dump(res)
+    else:
+        abort(404, f"Not found")
+
+
 # example:
 # curl -X 'POST' 'http://0.0.0.0:8000/submit' -H 'Content-Type: application/json' -d '{"user_id": 1, "rollercoaster_id" : 1}'
 def submit(body: dict):
