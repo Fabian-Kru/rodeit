@@ -2,3 +2,4 @@ flask-sqlalchemy~=3.1.1
 flask-marshmallow[sqlalchemy]~=0.15.0
 connexion~=3.0.5
 connexion[swagger-ui,uvicorn,flask]~=3.0.5
+flask~=3.0.0
