@@ -12,14 +12,14 @@ def main():
 
 def get_all(token_info):
     if not token_info:
-        abort(401, "böse")
+        abort(401, "Not authorized")
     c = Record.query.all()
     return record_schema.dump(c)
 
 
 def get_by_id(record_id: int, token_info):
     if not token_info:
-        abort(401, "böse")
+        abort(401, "Not authorized")
 
     res = Record.query.filter(Record.id == record_id).one_or_none()
     if res is not None:
@@ -30,7 +30,7 @@ def get_by_id(record_id: int, token_info):
 
 def get(user_id: int, token_info):
     if not token_info:
-        abort(401, "böse")
+        abort(401, "Not authorized")
 
     res = Record.query.filter(Record.user_id == user_id).one_or_none()
     if res is not None:
@@ -41,7 +41,7 @@ def get(user_id: int, token_info):
 
 def get_by_rollercoaster(rollercoaster_id: int, token_info):
     if not token_info:
-        abort(401, "böse")
+        abort(401, "Not authorized")
 
     res = Record.query.filter(Record.rollercoaster_id == rollercoaster_id).one_or_none()
     if res is not None:
@@ -54,7 +54,7 @@ def get_by_rollercoaster(rollercoaster_id: int, token_info):
 # curl -X 'POST' 'http://0.0.0.0:8000/submit' -H 'Content-Type: application/json' -d '{"user_id": 1, "rollercoaster_id" : 1}'
 def submit(body: dict, token_info):
     if not token_info:
-        abort(401, "böse")
+        abort(401, "Not authorized")
 
     user_id = body.get("user_id")
     rollercoaster_id = body.get("rollercoaster_id")
