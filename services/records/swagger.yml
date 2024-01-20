@@ -39,6 +39,32 @@ components:
       required: True
       schema:
         type: "integer"
+    query_limit:
+      name: "limit"
+      in: query
+      schema:
+        type: integer
+      description: "The numbers of items to return"
+    query_sort:
+      name: "sort"
+      in: query
+      schema:
+        type: string
+      description: "sort results by key"
+    query_start:
+      name: "start"
+      in: query
+      schema:
+        type: string
+        format: date-time
+      description: ""
+    query_end:
+      name: "end"
+      in: query
+      schema:
+        type: string
+        format: date-time
+      description: ""
   securitySchemes:
     jwt:
       type: http
@@ -52,16 +78,6 @@ paths:
       responses:
         "200":
           description: ""
-  /getAll:
-    get:
-      operationId: "record.get_all"
-      responses:
-        "200":
-          description: "Delete me"
-        '401':
-          description: "Access token is missing or invalid"
-      security:
-        - jwt: [ 'Bearer' ]
   /record:
     post:
       operationId: "record.submit"
@@ -122,3 +138,18 @@ paths:
           description: "Not found"
       security:
         - jwt: [ 'Bearer' ]
+  /records:
+    get:
+      operationId: "records.get"
+      parameters:
+        - $ref: "#/components/parameters/query_limit"
+        - $ref: "#/components/parameters/query_sort"
+        - $ref: "#/components/parameters/query_start"
+        - $ref: "#/components/parameters/query_end"
+      responses:
+        "200":
+          description: ""
+        '401':
+          description: "Access token is missing or invalid"
+      #security:
+      #  - jwt: [ 'Bearer' ]

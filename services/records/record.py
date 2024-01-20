@@ -10,13 +10,6 @@ def main():
     return ""
 
 
-def get_all(token_info):
-    if not token_info:
-        abort(401, "Not authorized")
-    c = Record.query.all()
-    return record_schema.dump(c)
-
-
 def get_by_id(record_id: int, token_info):
     if not token_info:
         abort(401, "Not authorized")
@@ -52,7 +45,7 @@ def get_by_rollercoaster(rollercoaster_id: int, token_info):
 
 # example:
 # curl -X 'POST' 'http://0.0.0.0:8000/submit' -H 'Content-Type: application/json' -d '{"user_id": 1, "rollercoaster_id" : 1}'
-def submit(body: dict, token_info):
+def submit(body: dict, token_info = True):
     if not token_info:
         abort(401, "Not authorized")
 
