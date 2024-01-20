@@ -1,0 +1,18 @@
+[package]
+name = "authentication-service"
+version = "0.1.0"
+edition = "2021"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+axum = {version = "0.6.7"}
+jwt = {version = "0.16.0"}
+serde = {features = ["derive"]}
+tokio= {version = "1.22.0", features = ["full"]}
+utoipa = {version = "3.0.3", features = ["axum_extras"]}
+utoipa-swagger-ui = {version = "3.0.2", features = ["axum"]}
+hmac = "0.12.1"
+sha2 = "0.10.8"
+sqlx = { version = "0.7", features = [ "runtime-async-std", "sqlite"] }
+serde_json = { version = "1.0.108", features = [] }

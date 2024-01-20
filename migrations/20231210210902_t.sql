@@ -1,0 +1,2 @@
+-- Add migration script here
+CREATE TABLE IF NOT EXISTS user (username TEXT NOT NULL, name TEXT NOT NULL, surname TEXT NOT NULL, id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL , password TEXT NOT NULL)
