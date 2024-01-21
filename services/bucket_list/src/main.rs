@@ -24,7 +24,7 @@ async fn main() -> Result<()> {
 	db.use_ns(DATABASE_NAMESPACE).use_db(DATABASE_NAME).await?;
 
 	let mut cc_default_headers = reqwest::header::HeaderMap::new();
-	cc_default_headers.insert("Accept", HeaderValue::from_static("application/json"));
+	cc_default_headers.insert("Accept", HeaderValue::from_static("application/ld+json"));
 	cc_default_headers.insert(
 		"Authorization",
 		HeaderValue::from_static("Bearer ee2d7ceb-eabe-4583-8b58-be70ff1ab79e"),

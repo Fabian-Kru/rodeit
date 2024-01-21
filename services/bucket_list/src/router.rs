@@ -1,4 +1,4 @@
-use std::sync::Arc;
+use std::{str::FromStr, sync::Arc};
 
 use aide::{
 	axum::{
@@ -34,13 +34,12 @@ struct BucketList {
 struct Park {
 	id: u32,
 	name: String,
-	country: String,
+	country: Option<Country>,
 }
 
 #[skip_serializing_none]
 #[derive(Clone, Serialize, JsonSchema)]
 struct Manufacturer {
-	id: u32,
 	name: String,
 }
 
@@ -55,6 +54,126 @@ struct Coaster {
 	manufacturer: Option<Manufacturer>,
 	park: Option<Park>,
 	image: Option<String>,
+}
+
+#[derive(Clone, Serialize, JsonSchema)]
+enum Country {
+	Argentina,
+	Australia,
+	Austria,
+	Belgium,
+	Brazil,
+	Burma,
+	Canada,
+	China,
+	Colombia,
+	Cyprus,
+	CzechRepublic,
+	Denmark,
+	Finland,
+	France,
+	Germany,
+	Guatemala,
+	Hungary,
+	India,
+	Indonesia,
+	Iraq,
+	Ireland,
+	Israel,
+	Italy,
+	Japan,
+	Lebanon,
+	Malaysia,
+	Mexico,
+	Mongolia,
+	Netherlands,
+	NewZealand,
+	Norway,
+	Peru,
+	Poland,
+	Portugal,
+	Qatar,
+	Russia,
+	Singapore,
+	SouthAfrica,
+	SouthKorea,
+	Spain,
+	Sweden,
+	Switzerland,
+	Taiwan,
+	Thailand,
+	Turkey,
+	Ukraine,
+	UnitedArabEmirates,
+	UnitedKingdom,
+	UnitedStates,
+	Vietnam,
+}
+
+impl Country {
+	fn from_id(id: &str) -> Option<Self> {
+		return id.split_once(".")?.1.parse().ok();
+	}
+}
+
+impl FromStr for Country {
+	type Err = anyhow::Error;
+
+	fn from_str(s: &str) -> std::prelude::v1::Result<Self, Self::Err> {
+		match s {
+			"argentina" => Ok(Self::Argentina),
+			"australia" => Ok(Self::Australia),
+			"austria" => Ok(Self::Austria),
+			"belgium" => Ok(Self::Belgium),
+			"brazil" => Ok(Self::Brazil),
+			"burma" => Ok(Self::Burma),
+			"canada" => Ok(Self::Canada),
+			"china" => Ok(Self::China),
+			"colombia" => Ok(Self::Colombia),
+			"cyprus" => Ok(Self::Cyprus),
+			"czech" => Ok(Self::CzechRepublic),
+			"denmark" => Ok(Self::Denmark),
+			"finland" => Ok(Self::Finland),
+			"france" => Ok(Self::France),
+			"germany" => Ok(Self::Germany),
+			"guatemala" => Ok(Self::Guatemala),
+			"hungary" => Ok(Self::Hungary),
+			"india" => Ok(Self::India),
+			"indonesia" => Ok(Self::Indonesia),
+			"iraq" => Ok(Self::Iraq),
+			"ireland" => Ok(Self::Ireland),
+			"israel" => Ok(Self::Israel),
+			"italy" => Ok(Self::Italy),
+			"japan" => Ok(Self::Japan),
+			"lebanon" => Ok(Self::Lebanon),
+			"malaysia" => Ok(Self::Malaysia),
+			"mexico" => Ok(Self::Mexico),
+			"mongolia" => Ok(Self::Mongolia),
+			"netherlands" => Ok(Self::Netherlands),
+			"newzealand" => Ok(Self::NewZealand),
+			"norway" => Ok(Self::Norway),
+			"peru" => Ok(Self::Peru),
+			"poland" => Ok(Self::Poland),
+			"portugal" => Ok(Self::Portugal),
+			"qatar" => Ok(Self::Qatar),
+			"russia" => Ok(Self::Russia),
+			"singapore" => Ok(Self::Singapore),
+			"southafrica" => Ok(Self::SouthAfrica),
+			"southkorea" => Ok(Self::SouthKorea),
+			"spain" => Ok(Self::Spain),
+			"sweden" => Ok(Self::Sweden),
+			"switzerland" => Ok(Self::Switzerland),
+			"taiwan" => Ok(Self::Taiwan),
+			"thailand" => Ok(Self::Thailand),
+			"turkey" => Ok(Self::Turkey),
+			"ukraine" => Ok(Self::Ukraine),
+			"uae" => Ok(Self::UnitedArabEmirates),
+			"uk" => Ok(Self::UnitedKingdom),
+			"usa" => Ok(Self::UnitedStates),
+			"vietnam" => Ok(Self::Vietnam),
+			_ => Err(anyhow::anyhow!("Invalid country")),
+		}
+	}
 }
 
 pub fn create_router(state: Arc<AppState>) -> ApiRouter {
@@ -95,7 +214,8 @@ async fn find_coasters_by_user_id(
 			.id(coaster_id.to_string())
 			.send(&state.cc_client)
 			.await
-			.or(Err(StatusCode::INTERNAL_SERVER_ERROR))?;
+			.unwrap();
+		// .or(Err(StatusCode::INTERNAL_SERVER_ERROR))?;
 
 		return Ok::<Coaster, StatusCode>(Coaster {
 			id: *coaster_id,
@@ -109,13 +229,12 @@ async fn find_coasters_by_user_id(
 				.manufacturer
 				.clone()
 				.map(|manufacturer| Manufacturer {
-					id: 0u32, // TODO: get manufacturer id
 					name: manufacturer.name.unwrap(),
 				}),
 			park: raw_coaster.park.clone().map(|park| Park {
-				id: 0u32, // TODO: get manufacturer id
+				id: park.id,
 				name: park.name.unwrap(),
-				country: park.country.unwrap().name.unwrap(), // TODO: unwrap country
+				country: Country::from_id(park.country.unwrap().name.unwrap().as_str()),
 			}),
 			image: raw_coaster.main_image.clone().unwrap().path,
 		});

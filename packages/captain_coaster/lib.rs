@@ -269,28 +269,11 @@ pub mod client {
 			client: &Client,
 		) -> Result<ResponseWrapper<Self::Output, Self>, ApiError<Client::Response>> {
 			let resp = self.send_raw(client).await?;
-			let media = resp.media_type();
-			if let Some(ty) = media {
-				if media_types::M_0.matches(&ty) {
-					return ResponseWrapper::wrap(resp, |r| async {
-						let bytes = r.body_bytes().await?;
-						serde_json::from_reader(bytes.as_ref()).map_err(ApiError::from)
-					})
-					.await;
-				} else if media_types::M_1.matches(&ty) {
-					return ResponseWrapper::wrap(resp, |r| async {
-						let bytes = r.body_bytes().await?;
-						serde_yaml::from_reader(bytes.as_ref()).map_err(ApiError::from)
-					})
-					.await;
-				}
-			}
-
-			let ty = resp
-				.header(http::header::CONTENT_TYPE.as_str())
-				.map(|v| String::from_utf8_lossy(v.as_bytes()).into_owned())
-				.unwrap_or_default();
-			Err(ApiError::UnsupportedMediaType(ty, resp))
+			return ResponseWrapper::wrap(resp, |r| async {
+				let bytes = r.body_bytes().await?;
+				serde_json::from_reader(bytes.as_ref()).map_err(ApiError::from)
+			})
+			.await;
 		}
 
 		/// Convenience method for returning a raw response after sending a request.
@@ -364,17 +347,6 @@ pub mod client {
 	impl<T, B> std::ops::DerefMut for ResponseWrapper<T, B> {
 		fn deref_mut(&mut self) -> &mut <Self as std::ops::Deref>::Target {
 			&mut self.object
-		}
-	}
-
-	pub mod media_types {
-		use lazy_static::lazy_static;
-
-		lazy_static! {
-			pub static ref M_0: mime::MediaRange = mime::MediaRange::parse("application/json")
-				.expect("cannot parse \"application/json\" as media range");
-			pub static ref M_1: mime::MediaRange = mime::MediaRange::parse("application/yaml")
-				.expect("cannot parse \"application/yaml\" as media range");
 		}
 	}
 
