@@ -6,7 +6,8 @@ use reqwest::Client;
 use router::create_router;
 use surrealdb::Surreal;
 
-pub mod router;
+mod model;
+mod router;
 
 pub struct AppState {
 	store: Surreal<surrealdb::engine::local::Db>,
