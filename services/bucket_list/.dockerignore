@@ -1,0 +1,10 @@
+.idea
+
+.vscode
+
+debug/
+target/
+
+node_modules/
+
+*.db
