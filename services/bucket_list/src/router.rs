@@ -1,7 +1,4 @@
-use crate::{
-	auth::Claims,
-	model::{coaster::Coaster, country::Country, manufacturer::Manufacturer, park::Park},
-};
+use crate::model::{coaster::Coaster, country::Country, manufacturer::Manufacturer, park::Park};
 use std::sync::Arc;
 
 use aide::{
@@ -11,6 +8,7 @@ use aide::{
 	transform::TransformOperation,
 };
 use anyhow::Result;
+use auth::Claims;
 use axum::{
 	extract::{Path, State},
 	http::StatusCode,

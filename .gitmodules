@@ -1,3 +1,0 @@
-[submodule "services/user"]
-	path = services/user
-	url = git@gitlab.hrz.tu-chemnitz.de:praktikum-scc/ws23-gruppe1/authentication-service.git

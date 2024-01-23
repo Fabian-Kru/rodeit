@@ -253,6 +253,16 @@ dependencies = [
 ]
 
 [[package]]
+name = "auth"
+version = "0.1.0"
+dependencies = [
+ "aide",
+ "axum 0.7.4",
+ "jsonwebtoken",
+ "serde",
+]
+
+[[package]]
 name = "autocfg"
 version = "1.1.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -525,6 +535,7 @@ version = "0.1.0"
 dependencies = [
  "aide",
  "anyhow",
+ "auth",
  "axum 0.7.4",
  "captain_coaster",
  "futures",

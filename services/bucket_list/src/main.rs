@@ -6,7 +6,6 @@ use reqwest::Client;
 use router::create_router;
 use surrealdb::Surreal;
 
-mod auth;
 mod model;
 mod router;
 

@@ -9,6 +9,8 @@ use axum::{
 use jsonwebtoken::{Algorithm, DecodingKey, Validation};
 use serde::{Deserialize, Serialize};
 
+const ENV_VAR_SECRET: &str = "RODEIT_SECRET";
+
 const ALGORITHM: Algorithm = Algorithm::HS256;
 
 #[derive(Debug, Serialize, Deserialize, OperationIo)]
@@ -24,7 +26,7 @@ where
 	type Rejection = (StatusCode, &'static str);
 
 	async fn from_request_parts(parts: &mut Parts, _: &S) -> Result<Self, Self::Rejection> {
-		let secret = env::var("RODEIT_SECRET").or(Err((
+		let secret = env::var(ENV_VAR_SECRET).or(Err((
 			StatusCode::INTERNAL_SERVER_ERROR,
 			"Could not load encryption secret",
 		)))?;
