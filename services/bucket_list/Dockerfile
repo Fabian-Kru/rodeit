@@ -1,6 +1,6 @@
 FROM rust:1.75-slim-bookworm AS builder
 WORKDIR /usr/src/rodeit
-COPY packages/captain_coaster packages/captain_coaster
+COPY packages/ packages/
 COPY services/bucket_list services/bucket_list
 WORKDIR /usr/src/rodeit/services/bucket_list
 RUN apt-get update && apt-get install -y pkg-config libssl-dev libclang-dev g++
