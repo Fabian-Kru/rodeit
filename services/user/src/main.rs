@@ -52,7 +52,8 @@ async fn main() {
     axum::serve(listener, app).await.unwrap();
 }
 
-#[utoipa::path(get, path = "/getAllUsers", responses((status = 200, body = [User]), (status = 404)))]
+#[utoipa::path(get, path = "/getAllUsers", responses((status = 200, body = [User], description="operation successful"),
+(status = 500, description="something went wrong")))]
 async fn get_all_users(State(pool): State<Conn>) -> Json<Vec<User>> {
     let row = sqlx::query!("SELECT * FROM user")
         .fetch_all(&(*pool))
@@ -77,7 +78,7 @@ async fn get_all_users(State(pool): State<Conn>) -> Json<Vec<User>> {
 }
 
 #[utoipa::path(post, path = "/register", responses(
-(status = 200, body = User), (status = 404)))]
+(status = 200, body = User, description="operation successful"), (status = 400, description="user already exists")))]
 async fn register_user(State(pool): State<Conn>, Json(user): Json<User>) -> impl IntoResponse {
     let result = sqlx::query(
         "INSERT INTO user (name, surname, username, password, id) values ($1,$2,$3,$4,$5)",
@@ -107,7 +108,8 @@ async fn register_user(State(pool): State<Conn>, Json(user): Json<User>) -> impl
 }
 
 #[utoipa::path(post, path = "/login", responses(
-(status = 200, body = LoginResponse), (status = 400)))]
+(status = 200, body = LoginResponse, description="operation successful"),
+(status = 400, description="user not found and/or password not valid")))]
 async fn login(
     State(pool): State<Conn>,
     Json(login): Json<LoginRequest>,
@@ -135,7 +137,8 @@ async fn login(
 }
 
 #[utoipa::path(delete, path = "/user/:user_id", responses(
-(status = 200), (status = 401), (status = 404)))]
+(status = 200, description="operation successful"), (status = 401, description="not permitted to delete this user"),
+(status = 404, description="user not found")))]
 async fn delete_user(
     State(pool): State<Conn>,
     Path(user_id): Path<u32>,
@@ -157,7 +160,8 @@ async fn delete_user(
 }
 
 #[utoipa::path(patch, path = "/user/:user_id/", responses(
-(status = 200), (status = 401), (status = 404)))]
+(status = 200, description="operation successful"), (status = 401, description="not permitted to change this user"),
+(status = 404, description="user not found")))]
 async fn patch_user(
     State(pool): State<Conn>,
     Path(user_id): Path<u32>,
@@ -172,7 +176,7 @@ async fn patch_user(
 }
 
 #[utoipa::path(get, path = "/user/:userid", responses(
-(status = 200), (status = 404)))]
+(status = 200, description="operation successful"), (status = 404, description="user not found")))]
 async fn get_user_by_id(State(pool): State<Conn>, Path(user_id): Path<u32>) -> Json<User> {
     let row = sqlx::query!("SELECT * FROM user WHERE id = $1", user_id)
         .fetch_one(&(*pool))
