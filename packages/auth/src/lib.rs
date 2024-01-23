@@ -6,16 +6,37 @@ use axum::{
 	extract::FromRequestParts,
 	http::{request::Parts, StatusCode},
 };
-use jsonwebtoken::{Algorithm, DecodingKey, Validation};
+use jsonwebtoken::{Algorithm, DecodingKey, EncodingKey, Header, Validation};
 use serde::{Deserialize, Serialize};
 
-const ENV_VAR_SECRET: &str = "RODEIT_SECRET";
-
 const ALGORITHM: Algorithm = Algorithm::HS256;
+const ENV_VAR_SECRET: &str = "RODEIT_SECRET";
 
 #[derive(Debug, Serialize, Deserialize, OperationIo)]
 pub struct Claims {
 	pub sub: String,
+}
+
+impl Claims {
+	pub fn new(sub: String) -> Claims {
+		Claims { sub }
+	}
+
+	pub fn encode(&self) -> Result<String, (StatusCode, &'static str)> {
+		let secret = env::var(ENV_VAR_SECRET).or(Err((
+			StatusCode::INTERNAL_SERVER_ERROR,
+			"Could not load encryption secret",
+		)))?;
+		return Ok(jsonwebtoken::encode(
+			&Header::new(ALGORITHM),
+			&self,
+			&EncodingKey::from_secret(secret.as_bytes()),
+		)
+		.or(Err((
+			StatusCode::INTERNAL_SERVER_ERROR,
+			"Failed to encode token",
+		)))?);
+	}
 }
 
 #[async_trait]
@@ -49,10 +70,18 @@ where
 		let jwt = jsonwebtoken::decode::<Claims>(
 			token,
 			&DecodingKey::from_secret(secret.as_bytes()),
-			&Validation::new(ALGORITHM),
+			&validation(),
 		)
 		.or(Err((StatusCode::BAD_REQUEST, "Invalid JWT")))?;
 
 		return Ok(jwt.claims);
 	}
+}
+
+fn validation() -> Validation {
+	let mut validation = Validation::new(ALGORITHM);
+	validation.set_required_spec_claims(&["sub"]);
+	validation.validate_aud = false;
+	validation.validate_exp = false;
+	return validation;
 }
