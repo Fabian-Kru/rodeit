@@ -2,18 +2,15 @@ use std::collections::BTreeMap;
 use std::sync::Arc;
 use std::{env, process};
 
+use auth::Claims;
 use axum::extract::{Path, State};
 use axum::routing::patch;
 use axum::{
 	http::StatusCode,
 	response::IntoResponse,
 	routing::{delete, get, post},
-	Json, Router, Server,
+	Json, Router,
 };
-use hmac::digest::KeyInit;
-use hmac::Hmac;
-use jwt::SignWithKey;
-use sha2::Sha256;
 use sqlx::{Pool, Row, Sqlite, SqlitePool};
 use utoipa::OpenApi;
 use utoipa_swagger_ui::SwaggerUi;
@@ -32,7 +29,6 @@ type Conn = Arc<Pool<Sqlite>>;
 
 #[tokio::main]
 async fn main() {
-	load_config();
 	println!("{}", &env::var("DATABASE_URL").unwrap());
 	let url = "sqlite://test.db";
 	let pool = SqlitePool::connect(&url).await.unwrap();
@@ -54,11 +50,10 @@ async fn main() {
 		.merge(SwaggerUi::new("/swagger-ui").url("/api-doc/openapi.json", ApiDoc::openapi()))
 		.with_state(state_pool);
 
-	Server::bind(&"127.0.0.1:9001".parse().unwrap())
-		.serve(app.into_make_service())
-		.await
-		.unwrap();
+	let listener = tokio::net::TcpListener::bind("0.0.0.0:9001").await.unwrap();
+	axum::serve(listener, app).await.unwrap();
 }
+
 #[utoipa::path(get, path = "/getAllUsers", responses((status = 200, body = [User]), (status = 404)))]
 async fn get_all_users(State(pool): State<Conn>) -> Json<Vec<User>> {
 	let row = sqlx::query!("SELECT * FROM user")
@@ -113,78 +108,69 @@ async fn register_user(State(pool): State<Conn>, Json(user): Json<User>) -> impl
 	);
 }
 
-#[utoipa::path(post, path = "/verify", responses(
-(status = 200, body = TokenStatus), (status = 404)))]
-async fn verify_token(Json(token): Json<TokenStatus>) -> Json<TokenStatus> {
-	let t = token.token;
-	println!("Verify {t}");
-	Json(TokenStatus {
-		token: "Testuser".to_string(),
-		status: false,
-	})
-}
-
 #[utoipa::path(post, path = "/login", responses(
 (status = 200, body = LoginResponse), (status = 400)))]
 async fn login(
 	State(pool): State<Conn>,
 	Json(login): Json<LoginRequest>,
 ) -> Result<Json<LoginResponse>, StatusCode> {
-	let token = "None".to_string();
 	let username = login.username;
 	let password = login.password;
 	println!("Login-Request {username} {password}");
 
-	if username == "admin" && password == "admin" {
-		let mut claims = BTreeMap::new();
-		// payload data
-		claims.insert("user", "admin");
-		// secret-key
-		let key: Hmac<Sha256> = Hmac::new_from_slice(token.as_ref()).unwrap();
-		let token_r: String = claims.sign_with_key(&key).unwrap();
-		println!("Token {}", token_r);
+	let row = sqlx::query!(
+		"SELECT * FROM user WHERE username = $1 and password = $2",
+		username,
+		password
+	)
+	.fetch_one(&(*pool))
+	.await;
 
-		return Ok(Json(LoginResponse { token: token_r }));
-	} else {
-		let row = sqlx::query!(
-			"SELECT * FROM user WHERE username = $1 and password = $2",
-			username,
-			password
-		)
-		.fetch_one(&(*pool))
-		.await;
+	let Ok(row) = row else {
+		return Err(StatusCode::UNAUTHORIZED);
+	};
 
-		if row.ok().is_none() {
-			return Err(StatusCode::UNAUTHORIZED);
-		}
-		let mut claims = BTreeMap::new();
-		// payload data
-		claims.insert("user", "admin");
-		// secret-key
-		let key: Hmac<Sha256> = Hmac::new_from_slice(token.as_ref()).unwrap();
-		let token_r: String = claims.sign_with_key(&key).unwrap();
-		return Ok(Json(LoginResponse { token: token_r }));
-	}
-	Err(StatusCode::UNAUTHORIZED)
-}
-fn load_config() {
-	if !env::var("SECRET_TOKEN").is_ok() {
-		println!("SECRET_TOKEN not found");
-		process::exit(1)
-	}
+	let claims = Claims::new(row.id.to_string());
+	let token = claims.encode().map_err(|err| err.0)?;
+
+	return Ok(Json(LoginResponse { token }));
 }
 
 #[utoipa::path(delete, path = "/user/:user_id", responses(
-(status = 200), (status = 404)))]
-async fn delete_user(State(pool): State<Conn>, Path(user_id): Path<u32>) -> StatusCode {
-	sqlx::query!("DELETE FROM user WHERE id = $1", user_id).execute(&(*pool));
-	StatusCode::OK
+(status = 200), (status = 401), (status = 404)))]
+async fn delete_user(
+	State(pool): State<Conn>,
+	Path(user_id): Path<u32>,
+	claims: Claims,
+) -> StatusCode {
+	if claims.sub != user_id.to_string() {
+		return StatusCode::UNAUTHORIZED;
+	}
+
+	let res = sqlx::query!("DELETE FROM user WHERE id = $1", user_id)
+		.execute(&(*pool))
+		.await;
+
+	match res {
+		Ok(_) => StatusCode::OK,
+		// TODO: is this semantically correct?
+		Err(_) => StatusCode::INTERNAL_SERVER_ERROR,
+	}
 }
 
 #[utoipa::path(patch, path = "/user/:user_id/", responses(
-(status = 200), (status = 404)))]
-async fn patch_user(State(pool): State<Conn>, Path(user_id): Path<u32>) -> StatusCode {
-	StatusCode::OK
+(status = 200), (status = 401), (status = 404)))]
+async fn patch_user(
+	State(pool): State<Conn>,
+	Path(user_id): Path<u32>,
+	claims: Claims,
+) -> StatusCode {
+	if claims.sub != user_id.to_string() {
+		return StatusCode::UNAUTHORIZED;
+	}
+
+	// TODO: implement
+	return StatusCode::NOT_IMPLEMENTED;
 }
 
 #[utoipa::path(get, path = "/user/:userid", responses(

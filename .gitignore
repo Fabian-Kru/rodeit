@@ -13,6 +13,8 @@ node_modules/
 
 # Embedded Databases
 *.db
+*.db-shm
+*.db-wal
 
 # Sensitive files (e.g. .env.local)
 *.local
