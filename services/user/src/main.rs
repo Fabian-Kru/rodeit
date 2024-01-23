@@ -1,17 +1,16 @@
-use std::collections::BTreeMap;
+use std::env;
 use std::sync::Arc;
-use std::{env, process};
 
 use auth::Claims;
-use axum::extract::{Path, State};
-use axum::routing::patch;
 use axum::{
     http::StatusCode,
+    Json,
     response::IntoResponse,
-    routing::{delete, get, post},
-    Json, Router,
+    Router, routing::{delete, get, post},
 };
-use sqlx::{Pool, Row, Sqlite, SqlitePool};
+use axum::extract::{Path, State};
+use axum::routing::patch;
+use sqlx::{Pool, Sqlite, SqlitePool};
 use utoipa::OpenApi;
 use utoipa_swagger_ui::SwaggerUi;
 
@@ -29,16 +28,15 @@ type Conn = Arc<Pool<Sqlite>>;
 
 #[tokio::main]
 async fn main() {
-    println!("{}", &env::var("DATABASE_URL").unwrap());
-    let url = "sqlite://test.db";
-    let pool = SqlitePool::connect(&url).await.unwrap();
+    let database_url = &env::var("DATABASE_URL").unwrap();
+    let pool = SqlitePool::connect(&database_url).await.unwrap();
 
     let state_pool = Arc::new(pool);
 
     sqlx::migrate!("./migrations")
         .run(&*state_pool)
         .await
-        .expect("Error!!!");
+        .expect("Unable to perform database migration!");
 
     let app = Router::new()
         .route("/getAllUsers", get(get_all_users))
