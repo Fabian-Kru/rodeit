@@ -11,6 +11,7 @@ pub struct Coaster {
 	pub name: String,
 	pub speed: Option<u32>,
 	pub height: Option<u32>,
+	pub length: Option<u32>,
 	pub inversions: Option<u32>,
 	pub manufacturer: Option<Manufacturer>,
 	pub park: Option<Park>,

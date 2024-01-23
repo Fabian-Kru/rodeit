@@ -1,4 +1,7 @@
-use crate::model::{coaster::Coaster, country::Country, manufacturer::Manufacturer, park::Park};
+use crate::{
+	auth::Claims,
+	model::{coaster::Coaster, country::Country, manufacturer::Manufacturer, park::Park},
+};
 use std::sync::Arc;
 
 use aide::{
@@ -79,6 +82,7 @@ async fn get_coasters(
 			name: raw_coaster.name.clone(),
 			speed: raw_coaster.speed.and_then(|speed| Some(speed as u32)),
 			height: raw_coaster.height.and_then(|height| Some(height as u32)),
+			length: raw_coaster.length.and_then(|length| Some(length as u32)),
 			inversions: raw_coaster
 				.inversions_number
 				.and_then(|inversions| Some(inversions as u32)),
@@ -113,8 +117,46 @@ fn docs_get_coasters(operation: TransformOperation) -> TransformOperation {
 		.summary("Get Coasters")
 		.description("Get all coasters in a bucket list")
 		.response_with::<200, Json<Vec<Coaster>>, _>(|res| {
-			res.description("List of Coasters in bucket list")
+			res.description("List of Coasters in bucket list").example(
+				vec![
+					Coaster {
+						id: 2832,
+						name: "Zadra".to_string(),
+						speed: Some(121),
+						height: Some(63),
+						length: Some(1316),
+						inversions: Some(3),
+						manufacturer: Some(Manufacturer {
+							name: "Rocky Mountain Construction".to_string(),
+						}),
+						park: Some(Park {
+							id: 545,
+							name: "Energylandia".to_string(),
+							country: Some(Country::Poland),
+						}),
+						image: Some("https://pictures.captaincoaster.com/1440x1440/9f68e5f6-f989-4f0d-a9f8-1330dad339e3.jpg".to_string()),
+					},
+					Coaster {
+						id: 2827,
+						name: "Taiga".to_string(),
+						speed: Some(106),
+						height: Some(52),
+						length: Some(1104),
+						inversions: Some(4),
+						manufacturer: Some(Manufacturer {
+							name: "Intamin".to_string(),
+						}),
+						park: Some(Park {
+							id: 117,
+							name: "Linnanmäki".to_string(),
+							country: Some(Country::Finland),
+						}),
+						image: Some("https://pictures.captaincoaster.com/1440x1440/9a6ed72f-34c7-4353-bcf5-49fbae03718b.jpeg".to_string()),
+					},
+				],
+			)
 		})
+		.response_with::<404, (), _>(|res| res.description("Bucket list not found"))
 }
 
 async fn get_coaster(
@@ -146,6 +188,7 @@ async fn get_coaster(
 		name: raw_coaster.name.clone(),
 		speed: raw_coaster.speed.and_then(|speed| Some(speed as u32)),
 		height: raw_coaster.height.and_then(|height| Some(height as u32)),
+		length: raw_coaster.length.and_then(|length| Some(length as u32)),
 		inversions: raw_coaster
 			.inversions_number
 			.and_then(|inversions| Some(inversions as u32)),
@@ -171,14 +214,38 @@ fn docs_get_coaster(operation: TransformOperation) -> TransformOperation {
 	operation
 		.summary("Get a Coaster by index")
 		.description("Get a coaster at a given index in a bucket list")
-		.response_with::<200, Json<Coaster>, _>(|res| res.description("Coaster in bucket list"))
+		.response_with::<200, Json<Coaster>, _>(|res| {
+			res.description("Coaster in bucket list").example(Coaster {
+				id: 2827,
+				name: "Taiga".to_string(),
+				speed: Some(106),
+				height: Some(52),
+				length: Some(1104),
+				inversions: Some(4),
+				manufacturer: Some(Manufacturer {
+					name: "Intamin".to_string(),
+				}),
+				park: Some(Park {
+					id: 117,
+					name: "Linnanmäki".to_string(),
+					country: Some(Country::Finland),
+				}),
+				image: Some("https://pictures.captaincoaster.com/1440x1440/9a6ed72f-34c7-4353-bcf5-49fbae03718b.jpeg".to_string()),
+			})
+		})
+		.response_with::<404, (), _>(|res| res.description("Bucket list not found or index out of bounds"))
 }
 
 async fn add_coaster(
 	State(state): State<Arc<AppState>>,
 	Path(user_id): Path<u64>,
+	claims: Claims,
 	Json(coaster_id): Json<u32>,
 ) -> Result<StatusCode, StatusCode> {
+	if claims.sub != user_id.to_string() {
+		return Err(StatusCode::UNAUTHORIZED);
+	}
+
 	let updated: Option<BucketList> = state
 		.store
 		.update(("bucket_list", user_id))
@@ -198,13 +265,20 @@ fn docs_add_coaster(operation: TransformOperation) -> TransformOperation {
 		.summary("Add a Coaster")
 		.description("Add a coaster to a bucket list")
 		.response_with::<200, (), _>(|res| res.description("Added to bucket list"))
+		.response_with::<401, (), _>(|res| res.description("Unauthorized"))
+		.response_with::<404, (), _>(|res| res.description("Bucket list not found"))
 }
 
 async fn insert_coaster(
 	State(state): State<Arc<AppState>>,
 	Path((user_id, index)): Path<(u64, usize)>,
+	claims: Claims,
 	Json(coaster_id): Json<u32>,
 ) -> Result<StatusCode, StatusCode> {
+	if claims.sub != user_id.to_string() {
+		return Err(StatusCode::UNAUTHORIZED);
+	}
+
 	let mut result = state.store.query("UPDATE type::thing('bucket_list', $user_id) SET coaster_ids = array::insert(coaster_ids, $coaster_id, $index);")
         .bind(("user_id", user_id))
         .bind(("index", index))
@@ -225,13 +299,20 @@ fn docs_insert_coaster(operation: TransformOperation) -> TransformOperation {
 		.summary("Insert a Coaster by index")
 		.description("Insert a coaster at a given index into a bucket list")
 		.response_with::<200, (), _>(|res| res.description("Inserted into bucket list"))
+		.response_with::<401, (), _>(|res| res.description("Unauthorized"))
+		.response_with::<404, (), _>(|res| res.description("Bucket list not found"))
 }
 
 async fn set_coasters(
 	State(state): State<Arc<AppState>>,
 	Path(user_id): Path<u64>,
+	claims: Claims,
 	Json(coaster_ids): Json<Vec<u32>>,
 ) -> Result<StatusCode, StatusCode> {
+	if claims.sub != user_id.to_string() {
+		return Err(StatusCode::UNAUTHORIZED);
+	}
+
 	let updated: Option<BucketList> = state
 		.store
 		.update(("bucket_list", user_id))
@@ -251,12 +332,19 @@ fn docs_set_coasters(operation: TransformOperation) -> TransformOperation {
 		.summary("Set all Coasters")
 		.description("Set all coasters in a bucket list")
 		.response_with::<200, (), _>(|res| res.description("Set bucket list"))
+		.response_with::<401, (), _>(|res| res.description("Unauthorized"))
+		.response_with::<404, (), _>(|res| res.description("Bucket list not found"))
 }
 
 async fn delete_coaster(
 	State(state): State<Arc<AppState>>,
 	Path((user_id, index)): Path<(u64, usize)>,
+	claims: Claims,
 ) -> Result<StatusCode, StatusCode> {
+	if claims.sub != user_id.to_string() {
+		return Err(StatusCode::UNAUTHORIZED);
+	}
+
 	let updated: Option<BucketList> = state
 		.store
 		.update(("bucket_list", user_id))
@@ -268,6 +356,7 @@ async fn delete_coaster(
 		return Err(StatusCode::NOT_FOUND);
 	}
 
+	// BUG: This still returns 200 if the index is out of bounds
 	return Ok(StatusCode::OK);
 }
 
@@ -276,4 +365,8 @@ fn docs_delete_coaster(operation: TransformOperation) -> TransformOperation {
 		.summary("Delete a Coaster by index")
 		.description("Delete a coaster at a given index from a bucket list")
 		.response_with::<200, (), _>(|res| res.description("Deleted from bucket list"))
+		.response_with::<401, (), _>(|res| res.description("Unauthorized"))
+		.response_with::<404, (), _>(|res| {
+			res.description("Bucket list not found or index out of bounds")
+		})
 }

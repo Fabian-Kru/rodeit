@@ -1,5 +1,6 @@
 use std::env;
 
+use aide::OperationIo;
 use axum::{
 	async_trait,
 	extract::FromRequestParts,
@@ -10,9 +11,9 @@ use serde::{Deserialize, Serialize};
 
 const ALGORITHM: Algorithm = Algorithm::HS256;
 
-#[derive(Debug, Serialize, Deserialize)]
-struct Claims {
-	sub: String,
+#[derive(Debug, Serialize, Deserialize, OperationIo)]
+pub struct Claims {
+	pub sub: String,
 }
 
 #[async_trait]
@@ -22,7 +23,7 @@ where
 {
 	type Rejection = (StatusCode, &'static str);
 
-	async fn from_request_parts(parts: &mut Parts, state: &S) -> Result<Self, Self::Rejection> {
+	async fn from_request_parts(parts: &mut Parts, _: &S) -> Result<Self, Self::Rejection> {
 		let secret = env::var("RODEIT_SECRET").or(Err((
 			StatusCode::INTERNAL_SERVER_ERROR,
 			"Could not load encryption secret",
@@ -53,4 +54,3 @@ where
 		return Ok(jwt.claims);
 	}
 }
-
