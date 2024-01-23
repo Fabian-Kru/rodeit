@@ -6,6 +6,7 @@ use reqwest::Client;
 use router::create_router;
 use surrealdb::Surreal;
 
+mod auth;
 mod model;
 mod router;
 
@@ -39,9 +40,9 @@ async fn main() -> Result<()> {
 		cc_client,
 	});
 
-	axum::Server::bind(&"0.0.0.0:3000".parse().unwrap())
-		.serve(create_router(app_state).into_make_service())
-		.await?;
+	let router = create_router(app_state);
+	let listener = tokio::net::TcpListener::bind("0.0.0.0:3000").await.unwrap();
+	axum::serve(listener, router).await.unwrap();
 
 	return Ok(());
 }

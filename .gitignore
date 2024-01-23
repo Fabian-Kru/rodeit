@@ -13,3 +13,9 @@ node_modules/
 
 # Embedded Databases
 *.db
+
+# Sensitive files (e.g. .env.local)
+*.local
+
+# macOS-specific files
+.DS_Store

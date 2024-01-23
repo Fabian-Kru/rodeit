@@ -3,13 +3,16 @@ use std::sync::Arc;
 
 use aide::{
 	axum::{routing::get_with, ApiRouter},
+	openapi::OpenApi,
+	scalar::Scalar,
 	transform::TransformOperation,
 };
 use anyhow::Result;
 use axum::{
 	extract::{Path, State},
 	http::StatusCode,
-	Json,
+	routing::get,
+	Extension, Json, Router,
 };
 use captain_coaster::{client::Sendable, coaster_read_coaster::CoasterReadCoaster};
 use futures::future::join_all;
@@ -25,8 +28,11 @@ struct BucketList {
 	coaster_ids: Vec<u32>,
 }
 
-pub fn create_router(state: Arc<AppState>) -> ApiRouter {
+pub fn create_router(state: Arc<AppState>) -> Router {
+	let mut api = OpenApi::default();
 	ApiRouter::new()
+		.route("/openapi.json", get(openapi))
+		.route("/docs", get(Scalar::new("/openapi.json").axum_handler()))
 		.api_route(
 			"/:user_id",
 			get_with(get_coasters, docs_get_coasters)
@@ -39,7 +45,13 @@ pub fn create_router(state: Arc<AppState>) -> ApiRouter {
 				.post_with(insert_coaster, docs_insert_coaster)
 				.delete_with(delete_coaster, docs_delete_coaster),
 		)
+		.finish_api(&mut api)
+		.layer(Extension(Arc::new(api)))
 		.with_state(state)
+}
+
+async fn openapi(Extension(api): Extension<Arc<OpenApi>>) -> Json<Arc<OpenApi>> {
+	return Json(api);
 }
 
 async fn get_coasters(
@@ -98,6 +110,7 @@ async fn get_coasters(
 
 fn docs_get_coasters(operation: TransformOperation) -> TransformOperation {
 	operation
+		.summary("Get Coasters")
 		.description("Get all coasters in a bucket list")
 		.response_with::<200, Json<Vec<Coaster>>, _>(|res| {
 			res.description("List of Coasters in bucket list")
@@ -156,6 +169,7 @@ async fn get_coaster(
 
 fn docs_get_coaster(operation: TransformOperation) -> TransformOperation {
 	operation
+		.summary("Get a Coaster by index")
 		.description("Get a coaster at a given index in a bucket list")
 		.response_with::<200, Json<Coaster>, _>(|res| res.description("Coaster in bucket list"))
 }
@@ -181,6 +195,7 @@ async fn add_coaster(
 
 fn docs_add_coaster(operation: TransformOperation) -> TransformOperation {
 	operation
+		.summary("Add a Coaster")
 		.description("Add a coaster to a bucket list")
 		.response_with::<200, (), _>(|res| res.description("Added to bucket list"))
 }
@@ -207,6 +222,7 @@ async fn insert_coaster(
 
 fn docs_insert_coaster(operation: TransformOperation) -> TransformOperation {
 	operation
+		.summary("Insert a Coaster by index")
 		.description("Insert a coaster at a given index into a bucket list")
 		.response_with::<200, (), _>(|res| res.description("Inserted into bucket list"))
 }
@@ -232,6 +248,7 @@ async fn set_coasters(
 
 fn docs_set_coasters(operation: TransformOperation) -> TransformOperation {
 	operation
+		.summary("Set all Coasters")
 		.description("Set all coasters in a bucket list")
 		.response_with::<200, (), _>(|res| res.description("Set bucket list"))
 }
@@ -256,6 +273,7 @@ async fn delete_coaster(
 
 fn docs_delete_coaster(operation: TransformOperation) -> TransformOperation {
 	operation
+		.summary("Delete a Coaster by index")
 		.description("Delete a coaster at a given index from a bucket list")
 		.response_with::<200, (), _>(|res| res.description("Deleted from bucket list"))
 }
