@@ -23,6 +23,6 @@ export function merge_specs(specs: Spec[]): OpenAPIV3_1.Document {
 				return [`${route}${path}`, item];
 			})
 		),
-	} as OpenAPIV3_1.Document));
-	return merge(...rebased_specs) as OpenAPIV3_1.Document;
+	}));
+	return merge(...rebased_specs) as unknown as OpenAPIV3_1.Document;
 }
