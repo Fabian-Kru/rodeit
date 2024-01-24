@@ -74,12 +74,16 @@ components:
 paths:
   "/":
     get:
+      summary: TODO
+      description: TODO
       operationId: "record.main"
       responses:
         "200":
           description: ""
   /record:
     post:
+      summary: Submit a Record
+      description: Submit a new coaster to a user
       operationId: "record.submit"
       requestBody:
           description: ""
@@ -98,6 +102,8 @@ paths:
         - jwt: [ 'Bearer' ]
   /record/{record_id}:
     get:
+      summary: Get a Record
+      description: Get a record by ID
       operationId: "record.get_by_id"
       parameters:
         - $ref: "#/components/parameters/record_id"
@@ -112,6 +118,8 @@ paths:
         - jwt: [ 'Bearer' ]
   /user/{user_id}:
     get:
+      summary: Get Records by User
+      description: Get all records of a user
       operationId: "record.get_by_user"
       parameters:
         - $ref: "#/components/parameters/user_id"
@@ -126,6 +134,8 @@ paths:
         - jwt: [ 'Bearer' ]
   /rollercoaster/{rollercoaster_id}:
     get:
+      summary: Get Records by Coaster
+      description: Get records of all users on a coaster
       operationId: "record.get_by_rollercoaster"
       parameters:
         - $ref: "#/components/parameters/rollercoaster_id"
@@ -140,6 +150,8 @@ paths:
         - jwt: [ 'Bearer' ]
   /records:
     get:
+      summary: Get Records
+      description: Get all records with pagination and sorting
       operationId: "records.get"
       parameters:
         - $ref: "#/components/parameters/query_limit"
