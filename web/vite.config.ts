@@ -1,10 +1,10 @@
-import { resolve } from 'path';
+import { resolve, dirname } from 'path';
 import { fileURLToPath } from 'url';
-import { defineConfig } from "@solidjs/start/config";
+import { defineConfig } from '@solidjs/start/config';
 import { vanillaExtractPlugin } from '@vanilla-extract/vite-plugin';
 import autoprefixer from 'autoprefixer';
 
-const DIRNAME = resolve(fileURLToPath(import.meta.url));
+const DIRNAME = dirname(fileURLToPath(import.meta.url));
 
 export default defineConfig({
 	css: {
@@ -24,7 +24,7 @@ export default defineConfig({
 	resolve: {
 		alias: [
 			{
-				find: '/^src/',
+				find: /^src/,
 				replacement: resolve(DIRNAME, 'src'),
 			},
 		],

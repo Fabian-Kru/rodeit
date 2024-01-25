@@ -14,8 +14,11 @@ target/
 node_modules/
 dist/
 
-# Solid.js
+# web
+.nitro
+.output
 .solid
+.vinxi
 
 # embedded databases
 *.db

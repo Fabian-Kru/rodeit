@@ -1,6 +1,8 @@
 // @refresh reload
 import { createSignal } from 'solid-js';
 
+import 'src/styles/global/mod.css.ts';
+
 export default function App() {
 	const [count, setCount] = createSignal(0);
 

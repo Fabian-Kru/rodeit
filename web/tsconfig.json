@@ -1,15 +1,18 @@
 {
 	"compilerOptions": {
-		"strict": true,
-		"target": "ESNext",
-		"module": "ESNext",
-		"moduleResolution": "node",
-		"resolveJsonModule": true,
-		"isolatedModules": true,
+		// base
+		"allowImportingTsExtensions": true,
+		"allowJs": false,
+		"allowUnreachableCode": false,
+		"allowUnusedLabels": false,
 		"esModuleInterop": true,
-		"noEmit": true,
+		"isolatedModules": true,
+		"moduleDetection": "force",
+		"resolveJsonModule": true,
 		"skipLibCheck": true,
-		"importsNotUsedAsValues": "remove",
+		"target": "ES2022",
+		// strictness
+		"strict": true,
 		"noFallthroughCasesInSwitch": true,
 		"noImplicitOverride": true,
 		"noImplicitReturns": true,
@@ -17,19 +20,17 @@
 		"noUnusedParameters": true,
 		"noUncheckedIndexedAccess": true,
 		"exactOptionalPropertyTypes": true,
-		"allowImportingTsExtensions": true,
-		"allowUnreachableCode": false,
-		"allowUnusedLabels": false,
-		"allowJs": false,
+		// bundler
+		"module": "ESNext",
+		"moduleResolution": "Bundler",
+		"noEmit": true,
+		// solid.js
 		"jsx": "preserve",
 		"jsxImportSource": "solid-js",
-		"types": [
-			"vinxi/client"
-		],
+		"types": ["vinxi/client"],
+		// resolve aliases
 		"paths": {
-			"src/*": [
-				"./src/*"
-			]
-		}
-	}
+			"src/*": ["./src/*"],
+		},
+	},
 }
