@@ -1,24 +1,23 @@
 import { writeFile } from 'fs/promises';
 import { dirname, resolve } from 'path';
 import { fileURLToPath } from 'url';
-import { rollup } from 'rollup';
 import { defineConfig, Plugin, ResolvedConfig } from 'vite';
 
 import vue from '@vitejs/plugin-vue';
 import yaml from '@rollup/plugin-yaml';
-import json from '@rollup/plugin-json';
 
 import { merge_specs } from './util/openapi.ts';
 import { build } from 'vite';
 
 export default defineConfig({
+	base: '/rodeit/',
 	build: { target: 'esnext' },
-	plugins: [vue(), yaml(), foo()],
+	plugins: [vue(), yaml(), openapi()],
 });
 
 const DIRNAME = dirname(fileURLToPath(import.meta.url));
 
-function foo(): Plugin {
+function openapi(): Plugin {
 	let config: ResolvedConfig;
 
 	return {
