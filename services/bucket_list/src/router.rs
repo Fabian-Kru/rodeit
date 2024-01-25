@@ -37,23 +37,26 @@ struct BucketList {
 pub fn create_router(state: Arc<AppState>) -> Router {
 	let mut api = OpenApi::default();
 	ApiRouter::new()
-		.route("/openapi.json", get(get_openapi))
-		.route("/docs", get(Scalar::new("/openapi.json").axum_handler()))
+		.route("/bucket_list/openapi.json", get(get_openapi))
+		.route(
+			"/bucket_list/docs",
+			get(Scalar::new("/openapi.json").axum_handler()),
+		)
 		.api_route(
-			"/",
+			"/bucket_list/",
 			get_with(
 				get_coasters_and_bucket_list_counts,
 				docs_get_coasters_and_bucket_list_counts,
 			),
 		)
 		.api_route(
-			"/:user_id",
+			"/bucket_list/:user_id",
 			get_with(get_coasters, docs_get_coasters)
 				.post_with(add_coaster, docs_add_coaster)
 				.put_with(set_coasters, docs_set_coasters),
 		)
 		.api_route(
-			"/:user_id/:index",
+			"/bucket_list/:user_id/:index",
 			get_with(get_coaster, docs_get_coaster)
 				.post_with(insert_coaster, docs_insert_coaster)
 				.delete_with(delete_coaster, docs_delete_coaster),
@@ -174,9 +177,7 @@ fn docs_get_coasters_and_bucket_list_counts(operation: TransformOperation) -> Tr
 								name: "Energylandia".to_string(),
 								country: Some(Country::Poland),
 							}),
-							image: Some(
-								"https://pictures.captaincoaster.com/1440x1440/9f68e5f6-f989-4f0d-a9f8-1330dad339e3.jpg".to_string(),
-							),
+							image: Some("9f68e5f6-f989-4f0d-a9f8-1330dad339e3.jpg".to_string()),
 						},
 					},
 					CoasterAndBucketListCount {
@@ -196,9 +197,7 @@ fn docs_get_coasters_and_bucket_list_counts(operation: TransformOperation) -> Tr
 								name: "Linnanmäki".to_string(),
 								country: Some(Country::Finland),
 							}),
-							image: Some(
-								"https://pictures.captaincoaster.com/1440x1440/9a6ed72f-34c7-4353-bcf5-49fbae03718b.jpeg".to_string(),
-							),
+							image: Some("9a6ed72f-34c7-4353-bcf5-49fbae03718b.jpeg".to_string()),
 						},
 					},
 				])
@@ -266,8 +265,8 @@ fn docs_get_coasters(operation: TransformOperation) -> TransformOperation {
 		.summary("Get Coasters in a Bucket List")
 		.description("Get all coasters in a bucket list")
 		.response_with::<200, Json<Vec<Coaster>>, _>(|res| {
-			res.description("List of Coasters in Bucket List").example(
-				vec![
+			res.description("List of Coasters in Bucket List")
+				.example(vec![
 					Coaster {
 						id: 2832,
 						name: "Zadra".to_string(),
@@ -283,7 +282,7 @@ fn docs_get_coasters(operation: TransformOperation) -> TransformOperation {
 							name: "Energylandia".to_string(),
 							country: Some(Country::Poland),
 						}),
-						image: Some("https://pictures.captaincoaster.com/1440x1440/9f68e5f6-f989-4f0d-a9f8-1330dad339e3.jpg".to_string()),
+						image: Some("9f68e5f6-f989-4f0d-a9f8-1330dad339e3.jpg".to_string()),
 					},
 					Coaster {
 						id: 2827,
@@ -300,10 +299,9 @@ fn docs_get_coasters(operation: TransformOperation) -> TransformOperation {
 							name: "Linnanmäki".to_string(),
 							country: Some(Country::Finland),
 						}),
-						image: Some("https://pictures.captaincoaster.com/1440x1440/9a6ed72f-34c7-4353-bcf5-49fbae03718b.jpeg".to_string()),
+						image: Some("9a6ed72f-34c7-4353-bcf5-49fbae03718b.jpeg".to_string()),
 					},
-				],
-			)
+				])
 		})
 		.response_with::<404, (), _>(|res| res.description("Bucket List not found"))
 }
@@ -379,10 +377,12 @@ fn docs_get_coaster(operation: TransformOperation) -> TransformOperation {
 					name: "Linnanmäki".to_string(),
 					country: Some(Country::Finland),
 				}),
-				image: Some("https://pictures.captaincoaster.com/1440x1440/9a6ed72f-34c7-4353-bcf5-49fbae03718b.jpeg".to_string()),
+				image: Some("9a6ed72f-34c7-4353-bcf5-49fbae03718b.jpeg".to_string()),
 			})
 		})
-		.response_with::<404, (), _>(|res| res.description("Bucket List not found or index out of bounds"))
+		.response_with::<404, (), _>(|res| {
+			res.description("Bucket List not found or index out of bounds")
+		})
 }
 
 async fn add_coaster(
