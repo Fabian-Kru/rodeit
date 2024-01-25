@@ -5,27 +5,27 @@ import { FontRule, createFont } from 'src/styles/internal/font.css.ts';
 
 import { lg, sm, xl } from './screens.css.ts';
 
-const font_face = fontFace({
-	src: 'url("../assets/fonts/font.woff2") format("woff2")',
+const font_face_geist = fontFace({
+	src: `url("src/assets/fonts/geist_variable.woff2") format("woff2")`,
 	fontWeight: '100 900',
 	fontStyle: 'normal',
 });
 
-const metrics: FontMetrics = {
-	familyName: font_face.slice(1, -1),
-	category: 'monospace',
+const metrics_geist: FontMetrics = {
+	familyName: font_face_geist.slice(1, -1),
+	category: 'sans-serif',
 	capHeight: 710,
 	ascent: 920,
 	descent: -220,
 	lineGap: 100,
 	unitsPerEm: 1000,
 	xHeight: 530,
-	xWidthAvg: 600,
+	xWidthAvg: 446,
 };
 
-export const font = createFont(metrics);
+export const geist = createFont(metrics_geist);
 
-export const display_large_rule = font([
+export const display_large_rule = geist([
 	{
 		letterSpacing: -0.5,
 		fontOptions: {
@@ -47,7 +47,7 @@ export const display_large_rule = font([
 	}),
 ]);
 
-export const display_medium_rule = font([
+export const display_medium_rule = geist([
 	{
 		fontOptions: {
 			capHeight: 30,
@@ -74,7 +74,7 @@ export const display_medium_rule = font([
 	}),
 ]);
 
-export const display_small_rule = font([
+export const display_small_rule = geist([
 	{
 		fontOptions: {
 			capHeight: 24,
@@ -95,7 +95,7 @@ export const display_small_rule = font([
 	}),
 ]);
 
-export const title_large_rule = font([
+export const title_large_rule = geist([
 	{
 		fontWeight: 500,
 		fontOptions: {
@@ -111,7 +111,7 @@ export const title_large_rule = font([
 	}),
 ]);
 
-export const title_medium_rule = font([
+export const title_medium_rule = geist([
 	{
 		fontWeight: 520,
 		fontOptions: {
@@ -127,7 +127,7 @@ export const title_medium_rule = font([
 	}),
 ]);
 
-export const title_small_rule = font([
+export const title_small_rule = geist([
 	{
 		fontWeight: 540,
 		fontOptions: {
@@ -142,10 +142,8 @@ export const title_small_rule = font([
 		},
 	}),
 ]);
-export const label_large_rule = font([
+export const label_large_rule = geist([
 	{
-		textTransform: 'uppercase',
-		letterSpacing: 1,
 		fontWeight: 600,
 		fontFeatureSettings: '"ss09"',
 		fontOptions: {
@@ -161,10 +159,8 @@ export const label_large_rule = font([
 	}),
 ]);
 
-export const label_medium_rule = font([
+export const label_medium_rule = geist([
 	{
-		textTransform: 'uppercase',
-		letterSpacing: 1,
 		fontWeight: 600,
 		fontFeatureSettings: '"ss09"',
 		fontOptions: {
@@ -180,10 +176,8 @@ export const label_medium_rule = font([
 	}),
 ]);
 
-export const label_small_rule = font([
+export const label_small_rule = geist([
 	{
-		textTransform: 'uppercase',
-		letterSpacing: 1,
 		fontWeight: 600,
 		fontFeatureSettings: '"ss09"',
 		fontOptions: {
@@ -199,7 +193,7 @@ export const label_small_rule = font([
 	}),
 ]);
 
-export const body_large_rule = font([
+export const body_large_rule = geist([
 	{
 		fontWeight: 500,
 		fontFeatureSettings: '"ss09"',
@@ -216,7 +210,7 @@ export const body_large_rule = font([
 	}),
 ]);
 
-export const body_medium_rule = font([
+export const body_medium_rule = geist([
 	{
 		fontWeight: 500,
 		fontFeatureSettings: '"ss09"',
@@ -233,7 +227,7 @@ export const body_medium_rule = font([
 	}),
 ]);
 
-export const body_small_rule = font([
+export const body_small_rule = geist([
 	{
 		fontWeight: 500,
 		fontFeatureSettings: '"ss09"',

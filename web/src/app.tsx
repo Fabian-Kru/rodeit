@@ -1,24 +1,55 @@
 // @refresh reload
-import { createSignal } from 'solid-js';
+import { RouteSectionProps, Router } from '@solidjs/router';
+import { FileRoutes } from '@solidjs/start';
+import { Component, Suspense } from 'solid-js';
 
 import 'src/styles/global/mod.css.ts';
+import { label_large } from './styles/atomic/fonts.css';
 
-export default function App() {
-	const [count, setCount] = createSignal(0);
-
+const Root: Component<RouteSectionProps> = function (props) {
 	return (
-		<main>
-			<h1>Hello world!</h1>
-			<button class="increment" onClick={() => setCount(count() + 1)}>
-				Clicks: {count()}
-			</button>
-			<p>
-				Visit{' '}
-				<a href="https://start.solidjs.com" target="_blank">
-					start.solidjs.com
-				</a>{' '}
-				to learn how to build SolidStart apps.
-			</p>
-		</main>
+		<>
+			<nav>
+				<ul>
+					<li class="pages">
+						<ul>
+							<li>
+								<a href="/coasters">
+									<p class={label_large}>Coasters</p>
+								</a>
+							</li>
+							<li>
+								<a href="/users">
+									<p class={label_large}>Users</p>
+								</a>
+							</li>
+						</ul>
+					</li>
+					<li class="auth">
+						<ul>
+							<li>
+								<a href="/login">
+									<p class={label_large}>Sign in</p>
+								</a>
+							</li>
+							<li>
+								<a href="/signup">
+									<p class={label_large}>Sign up</p>
+								</a>
+							</li>
+						</ul>
+					</li>
+				</ul>
+			</nav>
+			<Suspense>{props.children}</Suspense>
+		</>
+	);
+};
+
+export default function () {
+	return (
+		<Router root={Root}>
+			<FileRoutes />
+		</Router>
 	);
 }
