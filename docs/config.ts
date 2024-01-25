@@ -5,6 +5,7 @@ import { Spec } from './util/openapi.ts';
 
 import records_spec from '../services/records/swagger.yml';
 import bucket_list_spec from '../services/bucket_list/openapi.json';
+import users_spec from '../services/user/openapi.json';
 
 export const root: OpenAPIV3_1.Document = {
 	openapi: '3.1.0',
@@ -26,13 +27,18 @@ export const root: OpenAPIV3_1.Document = {
 
 export const specs: Spec[] = [
 	{
+		name: 'Bucket List',
+		route: '/bucket_list',
+		spec: bucket_list_spec as OpenAPIV3_1.Document,
+	},
+	{
 		name: 'Records',
 		route: '/records',
 		spec: records_spec as OpenAPIV3_1.Document,
 	},
 	{
-		name: 'Bucket List',
-		route: '/bucket_list',
-		spec: bucket_list_spec as OpenAPIV3_1.Document,
-	},
+		name: 'Users',
+		route: '/users',
+		spec: users_spec as OpenAPIV3_1.Document,
+	}
 ];

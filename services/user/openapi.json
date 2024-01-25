@@ -1,0 +1,244 @@
+{
+	"openapi": "3.1.0",
+	"info": {
+		"title": "User API",
+		"version": "0.1.0"
+	},
+	"paths": {
+		"/getAllUsers": {
+			"get": {
+				"tags": [
+					"crate"
+				],
+				"summary": "Get all Users",
+				"description": "Get all Users",
+				"operationId": "get_all_users",
+				"responses": {
+					"200": {
+						"description": "operation successful",
+						"content": {
+							"application/json": {
+								"schema": {
+									"type": "array",
+									"items": {
+										"$ref": "#/components/schemas/User"
+									}
+								}
+							}
+						}
+					},
+					"500": {
+						"description": "something went wrong"
+					}
+				}
+			}
+		},
+		"/login": {
+			"post": {
+				"tags": [
+					"crate"
+				],
+				"summary": "Login",
+				"description": "Login\n\nLogin with username and password and receive a JWT",
+				"operationId": "login",
+				"requestBody": {
+					"description": "",
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/LoginRequest"
+							}
+						}
+					},
+					"required": true
+				},
+				"responses": {
+					"200": {
+						"description": "operation successful",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/LoginResponse"
+								}
+							}
+						}
+					},
+					"400": {
+						"description": "user not found and/or password not valid"
+					}
+				}
+			}
+		},
+		"/register": {
+			"post": {
+				"tags": [
+					"crate"
+				],
+				"summary": "Register",
+				"description": "Register\n\nRegister a new user",
+				"operationId": "register_user",
+				"requestBody": {
+					"description": "",
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/User"
+							}
+						}
+					},
+					"required": true
+				},
+				"responses": {
+					"200": {
+						"description": "operation successful",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/User"
+								}
+							}
+						}
+					},
+					"400": {
+						"description": "user already exists"
+					}
+				}
+			}
+		},
+		"/user/:user_id": {
+			"delete": {
+				"tags": [
+					"crate"
+				],
+				"summary": "Delete a User by ID",
+				"description": "Delete a User by ID",
+				"operationId": "delete_user",
+				"responses": {
+					"200": {
+						"description": "operation successful"
+					},
+					"401": {
+						"description": "not permitted to delete this user"
+					},
+					"404": {
+						"description": "user not found"
+					}
+				},
+				"security": [
+					{
+						"jwt": []
+					}
+				]
+			}
+		},
+		"/user/:user_id/": {
+			"patch": {
+				"tags": [
+					"crate"
+				],
+				"summary": "Update a User by ID",
+				"description": "Update a User by ID",
+				"operationId": "patch_user",
+				"responses": {
+					"200": {
+						"description": "operation successful"
+					},
+					"401": {
+						"description": "not permitted to change this user"
+					},
+					"404": {
+						"description": "user not found"
+					}
+				},
+				"security": [
+					{
+						"jwt": []
+					}
+				]
+			}
+		},
+		"/user/:userid": {
+			"get": {
+				"tags": [
+					"crate"
+				],
+				"summary": "Get a User by ID",
+				"description": "Get a User by ID",
+				"operationId": "get_user_by_id",
+				"responses": {
+					"200": {
+						"description": "operation successful"
+					},
+					"404": {
+						"description": "user not found"
+					}
+				}
+			}
+		}
+	},
+	"components": {
+		"schemas": {
+			"LoginRequest": {
+				"type": "object",
+				"required": [
+					"username",
+					"password"
+				],
+				"properties": {
+					"password": {
+						"type": "string"
+					},
+					"username": {
+						"type": "string"
+					}
+				}
+			},
+			"LoginResponse": {
+				"type": "object",
+				"required": [
+					"token"
+				],
+				"properties": {
+					"token": {
+						"type": "string"
+					}
+				}
+			},
+			"User": {
+				"type": "object",
+				"required": [
+					"id",
+					"name",
+					"surname",
+					"username",
+					"password"
+				],
+				"properties": {
+					"id": {
+						"type": "integer",
+						"format": "int64"
+					},
+					"name": {
+						"type": "string"
+					},
+					"password": {
+						"type": "string"
+					},
+					"surname": {
+						"type": "string"
+					},
+					"username": {
+						"type": "string"
+					}
+				}
+			}
+		},
+		"securitySchemes": {
+			"jwt": {
+				"type": "http",
+				"scheme": "bearer",
+				"bearerFormat": "JWT"
+			}
+		}
+	}
+}

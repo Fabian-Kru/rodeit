@@ -2,16 +2,17 @@ use std::env;
 use std::sync::Arc;
 
 use auth::Claims;
-use axum::{
-    http::StatusCode,
-    Json,
-    response::IntoResponse,
-    Router, routing::{delete, get, post},
-};
 use axum::extract::{Path, State};
 use axum::routing::patch;
+use axum::{
+    http::StatusCode,
+    response::IntoResponse,
+    routing::{delete, get, post},
+    Json, Router,
+};
 use sqlx::{Pool, Sqlite, SqlitePool};
-use utoipa::OpenApi;
+use utoipa::openapi::security::{HttpAuthScheme, HttpBuilder, SecurityScheme};
+use utoipa::{Modify, OpenApi};
 use utoipa_swagger_ui::SwaggerUi;
 
 use crate::models::*;
@@ -19,10 +20,38 @@ use crate::models::*;
 mod models;
 
 #[derive(OpenApi)]
-#[openapi(paths(get_all_users, register_user, login, delete_user, get_user_by_id, patch_user),
-components(schemas(User, LoginResponse, LoginRequest)),
-tags((name = "user-service", description = "Test")))]
+#[openapi(
+    info(title = "User API",),
+    paths(
+        get_all_users,
+        register_user,
+        login,
+        delete_user,
+        get_user_by_id,
+        patch_user
+    ),
+    components(schemas(User, LoginResponse, LoginRequest)),
+    modifiers(&SecuritySchemes),
+)]
 struct ApiDoc;
+
+struct SecuritySchemes;
+
+impl Modify for SecuritySchemes {
+    fn modify(&self, openapi: &mut utoipa::openapi::OpenApi) {
+        if let Some(components) = openapi.components.as_mut() {
+            components.add_security_scheme(
+                "jwt",
+                SecurityScheme::Http(
+                    HttpBuilder::new()
+                        .scheme(HttpAuthScheme::Bearer)
+                        .bearer_format("JWT")
+                        .build(),
+                ),
+            )
+        }
+    }
+}
 
 type Conn = Arc<Pool<Sqlite>>;
 
@@ -52,8 +81,15 @@ async fn main() {
     axum::serve(listener, app).await.unwrap();
 }
 
-#[utoipa::path(get, path = "/getAllUsers", responses((status = 200, body = [User], description="operation successful"),
-(status = 500, description="something went wrong")))]
+/// Get all Users
+#[utoipa::path(
+    get,
+    path = "/getAllUsers",
+    responses(
+        (status = 200, body = [User], description="operation successful"),
+        (status = 500, description="something went wrong")
+    )
+)]
 async fn get_all_users(State(pool): State<Conn>) -> Json<Vec<User>> {
     let row = sqlx::query!("SELECT * FROM user")
         .fetch_all(&(*pool))
@@ -77,8 +113,17 @@ async fn get_all_users(State(pool): State<Conn>) -> Json<Vec<User>> {
     Json(vec)
 }
 
-#[utoipa::path(post, path = "/register", responses(
-(status = 200, body = User, description="operation successful"), (status = 400, description="user already exists")))]
+/// Register
+///
+/// Register a new user
+#[utoipa::path(
+    post,
+    path = "/register",
+    responses(
+        (status = 200, body = User, description="operation successful"),
+        (status = 400, description="user already exists")
+    )
+)]
 async fn register_user(State(pool): State<Conn>, Json(user): Json<User>) -> impl IntoResponse {
     let result = sqlx::query(
         "INSERT INTO user (name, surname, username, password, id) values ($1,$2,$3,$4,$5)",
@@ -107,9 +152,17 @@ async fn register_user(State(pool): State<Conn>, Json(user): Json<User>) -> impl
     );
 }
 
-#[utoipa::path(post, path = "/login", responses(
-(status = 200, body = LoginResponse, description="operation successful"),
-(status = 400, description="user not found and/or password not valid")))]
+/// Login
+///
+/// Login with username and password and receive a JWT
+#[utoipa::path(
+    post,
+    path = "/login",
+    responses(
+        (status = 200, body = LoginResponse, description="operation successful"),
+        (status = 400, description="user not found and/or password not valid")
+    )
+)]
 async fn login(
     State(pool): State<Conn>,
     Json(login): Json<LoginRequest>,
@@ -136,9 +189,17 @@ async fn login(
     return Ok(Json(LoginResponse { token }));
 }
 
-#[utoipa::path(delete, path = "/user/:user_id", responses(
-(status = 200, description="operation successful"), (status = 401, description="not permitted to delete this user"),
-(status = 404, description="user not found")))]
+/// Delete a User by ID
+#[utoipa::path(
+    delete,
+    path = "/user/:user_id",
+    security(("jwt" = [])),
+    responses(
+        (status = 200, description="operation successful"),
+        (status = 401, description="not permitted to delete this user"),
+        (status = 404, description="user not found")
+    )
+)]
 async fn delete_user(
     State(pool): State<Conn>,
     Path(user_id): Path<u32>,
@@ -159,9 +220,17 @@ async fn delete_user(
     }
 }
 
-#[utoipa::path(patch, path = "/user/:user_id/", responses(
-(status = 200, description="operation successful"), (status = 401, description="not permitted to change this user"),
-(status = 404, description="user not found")))]
+/// Update a User by ID
+#[utoipa::path(
+    patch,
+    path = "/user/:user_id/",
+    security(("jwt" = [])),
+    responses(
+        (status = 200, description="operation successful"),
+        (status = 401, description="not permitted to change this user"),
+        (status = 404, description="user not found")
+    )
+)]
 async fn patch_user(
     State(pool): State<Conn>,
     Path(user_id): Path<u32>,
@@ -175,6 +244,7 @@ async fn patch_user(
     return StatusCode::NOT_IMPLEMENTED;
 }
 
+/// Get a User by ID
 #[utoipa::path(get, path = "/user/:userid", responses(
 (status = 200, description="operation successful"), (status = 404, description="user not found")))]
 async fn get_user_by_id(State(pool): State<Conn>, Path(user_id): Path<u32>) -> Json<User> {

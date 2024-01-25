@@ -127,7 +127,7 @@ async fn get_coasters(
 
 fn docs_get_coasters(operation: TransformOperation) -> TransformOperation {
 	operation
-		.summary("Get Coasters")
+		.summary("Get all Coasters")
 		.description("Get all coasters in a bucket list")
 		.response_with::<200, Json<Vec<Coaster>>, _>(|res| {
 			res.description("List of Coasters in bucket list").example(

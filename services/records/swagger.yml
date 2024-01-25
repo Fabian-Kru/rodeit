@@ -102,8 +102,7 @@ paths:
         - jwt: []
   /record/{record_id}:
     get:
-      summary: Get a Record
-      description: Get a record by ID
+      summary: Get a Record by ID
       operationId: "record.get_by_id"
       parameters:
         - $ref: "#/components/parameters/record_id"
@@ -150,7 +149,7 @@ paths:
         - jwt: []
   /records:
     get:
-      summary: Get Records
+      summary: Get all Records
       description: Get all records with pagination and sorting
       operationId: "records.get"
       parameters:
