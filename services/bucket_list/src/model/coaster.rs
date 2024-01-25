@@ -17,3 +17,10 @@ pub struct Coaster {
 	pub park: Option<Park>,
 	pub image: Option<String>,
 }
+
+#[skip_serializing_none]
+#[derive(Clone, Serialize, JsonSchema)]
+pub struct CoasterAndBucketListCount {
+	pub coaster: Coaster,
+	pub bucket_list_count: u32,
+}

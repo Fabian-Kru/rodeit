@@ -5,13 +5,79 @@
 		"version": "0.1.0"
 	},
 	"paths": {
+		"/": {
+			"get": {
+				"summary": "Get Coasters and Bucket List Counts",
+				"description": "Get all coasters and the amount of bucket lists they are in",
+				"responses": {
+					"200": {
+						"description": "List of Coasters and Bucket List Counts",
+						"content": {
+							"application/json": {
+								"schema": {
+									"type": "array",
+									"items": {
+										"$ref": "#/components/schemas/CoasterAndBucketListCount"
+									}
+								},
+								"example": [
+									{
+										"coaster": {
+											"id": 2832,
+											"name": "Zadra",
+											"speed": 121,
+											"height": 63,
+											"length": 1316,
+											"inversions": 3,
+											"manufacturer": {
+												"name": "Rocky Mountain Construction"
+											},
+											"park": {
+												"id": 545,
+												"name": "Energylandia",
+												"country": "Poland"
+											},
+											"image": "https://pictures.captaincoaster.com/1440x1440/9f68e5f6-f989-4f0d-a9f8-1330dad339e3.jpg"
+										},
+										"bucket_list_count": 12
+									},
+									{
+										"coaster": {
+											"id": 2827,
+											"name": "Taiga",
+											"speed": 106,
+											"height": 52,
+											"length": 1104,
+											"inversions": 4,
+											"manufacturer": {
+												"name": "Intamin"
+											},
+											"park": {
+												"id": 117,
+												"name": "Linnanmäki",
+												"country": "Finland"
+											},
+											"image": "https://pictures.captaincoaster.com/1440x1440/9a6ed72f-34c7-4353-bcf5-49fbae03718b.jpeg"
+										},
+										"bucket_list_count": 8
+									}
+								]
+							}
+						}
+					},
+					"404": {
+						"description": "Bucket List not found"
+					}
+				}
+			}
+		},
 		"/{user_id}": {
 			"get": {
-				"summary": "Get Coasters",
+				"summary": "Get Coasters in a Bucket List",
 				"description": "Get all coasters in a bucket list",
 				"responses": {
 					"200": {
-						"description": "List of Coasters in bucket list",
+						"description": "List of Coasters in Bucket List",
 						"content": {
 							"application/json": {
 								"schema": {
@@ -60,12 +126,12 @@
 						}
 					},
 					"404": {
-						"description": "Bucket list not found"
+						"description": "Bucket List not found"
 					}
 				}
 			},
 			"put": {
-				"summary": "Set all Coasters",
+				"summary": "Set Coasters in a Bucket List",
 				"description": "Set all coasters in a bucket list",
 				"requestBody": {
 					"content": {
@@ -84,13 +150,13 @@
 				},
 				"responses": {
 					"200": {
-						"description": "Set bucket list"
+						"description": "Set Bucket List"
 					},
 					"401": {
 						"description": "Unauthorized"
 					},
 					"404": {
-						"description": "Bucket list not found"
+						"description": "Bucket List not found"
 					}
 				},
 				"security": [
@@ -116,13 +182,13 @@
 				},
 				"responses": {
 					"200": {
-						"description": "Added to bucket list"
+						"description": "Added to Bucket List"
 					},
 					"401": {
 						"description": "Unauthorized"
 					},
 					"404": {
-						"description": "Bucket list not found"
+						"description": "Bucket List not found"
 					}
 				},
 				"security": [
@@ -138,7 +204,7 @@
 				"description": "Get a coaster at a given index in a bucket list",
 				"responses": {
 					"200": {
-						"description": "Coaster in bucket list",
+						"description": "Coaster in Bucket List",
 						"content": {
 							"application/json": {
 								"schema": {
@@ -165,7 +231,7 @@
 						}
 					},
 					"404": {
-						"description": "Bucket list not found or index out of bounds"
+						"description": "Bucket List not found or index out of bounds"
 					}
 				}
 			},
@@ -186,13 +252,13 @@
 				},
 				"responses": {
 					"200": {
-						"description": "Inserted into bucket list"
+						"description": "Inserted into Bucket List"
 					},
 					"401": {
 						"description": "Unauthorized"
 					},
 					"404": {
-						"description": "Bucket list not found"
+						"description": "Bucket List not found"
 					}
 				},
 				"security": [
@@ -206,13 +272,13 @@
 				"description": "Delete a coaster at a given index from a bucket list",
 				"responses": {
 					"200": {
-						"description": "Deleted from bucket list"
+						"description": "Deleted from Bucket List"
 					},
 					"401": {
 						"description": "Unauthorized"
 					},
 					"404": {
-						"description": "Bucket list not found or index out of bounds"
+						"description": "Bucket List not found or index out of bounds"
 					}
 				},
 				"security": [
@@ -304,6 +370,23 @@
 						],
 						"format": "uint32",
 						"minimum": 0.0
+					}
+				}
+			},
+			"CoasterAndBucketListCount": {
+				"type": "object",
+				"required": [
+					"bucket_list_count",
+					"coaster"
+				],
+				"properties": {
+					"bucket_list_count": {
+						"type": "integer",
+						"format": "uint32",
+						"minimum": 0.0
+					},
+					"coaster": {
+						"$ref": "#/components/schemas/Coaster"
 					}
 				}
 			},
