@@ -42,7 +42,7 @@ function foo(): Plugin {
 			});
 			const code = output[0].output[0].code;
 			const mod = await import(`data:text/javascript;charset=utf-8,${encodeURIComponent(code)}`);
-			const spec = merge_specs(mod.specs);
+			const spec = merge_specs(mod.root, mod.specs);
 			writeFile(resolve(config.root, config.build.outDir, 'openapi.json'), JSON.stringify(spec, null, 2));
 		}
 	}

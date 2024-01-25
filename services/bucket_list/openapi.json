@@ -92,7 +92,12 @@
 					"404": {
 						"description": "Bucket list not found"
 					}
-				}
+				},
+				"security": [
+					{
+						"jwt": []
+					}
+				]
 			},
 			"post": {
 				"summary": "Add a Coaster",
@@ -119,7 +124,12 @@
 					"404": {
 						"description": "Bucket list not found"
 					}
-				}
+				},
+				"security": [
+					{
+						"jwt": []
+					}
+				]
 			}
 		},
 		"/{user_id}/{index}": {
@@ -184,7 +194,12 @@
 					"404": {
 						"description": "Bucket list not found"
 					}
-				}
+				},
+				"security": [
+					{
+						"jwt": []
+					}
+				]
 			},
 			"delete": {
 				"summary": "Delete a Coaster by index",
@@ -199,11 +214,23 @@
 					"404": {
 						"description": "Bucket list not found or index out of bounds"
 					}
-				}
+				},
+				"security": [
+					{
+						"jwt": []
+					}
+				]
 			}
 		}
 	},
 	"components": {
+		"securitySchemes": {
+			"jwt": {
+				"type": "http",
+				"scheme": "bearer",
+				"bearerFormat": "JWT"
+			}
+		},
 		"schemas": {
 			"Coaster": {
 				"type": "object",

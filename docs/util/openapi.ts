@@ -9,7 +9,7 @@ export type Spec = {
 
 const OPERATIONS = ['get', 'put', 'post', 'delete', 'options', 'head', 'patch', 'trace'] as const;
 
-export function merge_specs(specs: Spec[]): OpenAPIV3_1.Document {
+export function merge_specs(root: OpenAPIV3_1.Document, specs: Spec[]): OpenAPIV3_1.Document {
 	let rebased_specs = specs.map(({ name, route, spec }) => ({
 		...spec,
 		paths: Object.fromEntries(
@@ -24,5 +24,5 @@ export function merge_specs(specs: Spec[]): OpenAPIV3_1.Document {
 			})
 		),
 	}));
-	return merge(...rebased_specs) as unknown as OpenAPIV3_1.Document;
+	return merge(...rebased_specs, root) as unknown as OpenAPIV3_1.Document;
 }

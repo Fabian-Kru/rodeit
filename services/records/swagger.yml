@@ -99,7 +99,7 @@ paths:
         '401':
           description: "Access token is missing or invalid"
       security:
-        - jwt: [ 'Bearer' ]
+        - jwt: []
   /record/{record_id}:
     get:
       summary: Get a Record
@@ -115,7 +115,7 @@ paths:
         "404":
           description: "Not found"
       security:
-        - jwt: [ 'Bearer' ]
+        - jwt: []
   /user/{user_id}:
     get:
       summary: Get Records by User
@@ -131,7 +131,7 @@ paths:
         "404":
           description: "Not found"
       security:
-        - jwt: [ 'Bearer' ]
+        - jwt: []
   /rollercoaster/{rollercoaster_id}:
     get:
       summary: Get Records by Coaster
@@ -147,7 +147,7 @@ paths:
         "404":
           description: "Not found"
       security:
-        - jwt: [ 'Bearer' ]
+        - jwt: []
   /records:
     get:
       summary: Get Records
@@ -164,4 +164,4 @@ paths:
         '401':
           description: "Access token is missing or invalid"
       #security:
-      #  - jwt: [ 'Bearer' ]
+      #  - jwt: []
