@@ -1,0 +1,35 @@
+{
+	"compilerOptions": {
+		"strict": true,
+		"target": "ESNext",
+		"module": "ESNext",
+		"moduleResolution": "node",
+		"resolveJsonModule": true,
+		"isolatedModules": true,
+		"esModuleInterop": true,
+		"noEmit": true,
+		"skipLibCheck": true,
+		"importsNotUsedAsValues": "remove",
+		"noFallthroughCasesInSwitch": true,
+		"noImplicitOverride": true,
+		"noImplicitReturns": true,
+		"noUnusedLocals": true,
+		"noUnusedParameters": true,
+		"noUncheckedIndexedAccess": true,
+		"exactOptionalPropertyTypes": true,
+		"allowImportingTsExtensions": true,
+		"allowUnreachableCode": false,
+		"allowUnusedLabels": false,
+		"allowJs": false,
+		"jsx": "preserve",
+		"jsxImportSource": "solid-js",
+		"types": [
+			"vinxi/client"
+		],
+		"paths": {
+			"src/*": [
+				"./src/*"
+			]
+		}
+	}
+}
