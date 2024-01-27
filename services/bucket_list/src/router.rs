@@ -37,26 +37,26 @@ struct BucketList {
 pub fn create_router(state: Arc<AppState>) -> Router {
 	let mut api = OpenApi::default();
 	ApiRouter::new()
-		.route("/bucket_list/openapi.json", get(get_openapi))
+		.route("/openapi.json", get(get_openapi))
 		.route(
-			"/bucket_list/docs",
+			"/docs",
 			get(Scalar::new("/openapi.json").axum_handler()),
 		)
 		.api_route(
-			"/bucket_list/",
+			"/",
 			get_with(
 				get_coasters_and_bucket_list_counts,
 				docs_get_coasters_and_bucket_list_counts,
 			),
 		)
 		.api_route(
-			"/bucket_list/:user_id",
+			"/:user_id",
 			get_with(get_coasters, docs_get_coasters)
 				.post_with(add_coaster, docs_add_coaster)
 				.put_with(set_coasters, docs_set_coasters),
 		)
 		.api_route(
-			"/bucket_list/:user_id/:index",
+			"/:user_id/:index",
 			get_with(get_coaster, docs_get_coaster)
 				.post_with(insert_coaster, docs_insert_coaster)
 				.delete_with(delete_coaster, docs_delete_coaster),
