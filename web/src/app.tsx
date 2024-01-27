@@ -4,13 +4,15 @@ import { FileRoutes } from '@solidjs/start';
 import { Component, Suspense } from 'solid-js';
 
 import 'src/styles/global/mod.css.ts';
-import { label_large } from './styles/atomic/fonts.css';
+import { label_large } from 'src/styles/atomic/fonts.css';
 
-const Root: Component<RouteSectionProps> = function (props) {
+import { nav, nav_ul } from './app.css.ts';
+
+const Root: Component<RouteSectionProps> = function(props) {
 	return (
 		<>
-			<nav>
-				<ul>
+			<nav class={nav}>
+				<ul class={nav_ul}>
 					<li class="pages">
 						<ul>
 							<li>
@@ -46,7 +48,7 @@ const Root: Component<RouteSectionProps> = function (props) {
 	);
 };
 
-export default function () {
+export default function() {
 	return (
 		<Router root={Root}>
 			<FileRoutes />

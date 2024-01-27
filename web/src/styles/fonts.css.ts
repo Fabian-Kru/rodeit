@@ -97,7 +97,7 @@ export const display_small_rule = geist([
 
 export const title_large_rule = geist([
 	{
-		fontWeight: 500,
+		fontWeight: 400,
 		fontOptions: {
 			capHeight: 18,
 			lineGap: 12,
@@ -113,7 +113,7 @@ export const title_large_rule = geist([
 
 export const title_medium_rule = geist([
 	{
-		fontWeight: 520,
+		fontWeight: 400,
 		fontOptions: {
 			capHeight: 15,
 			lineGap: 12,
@@ -129,7 +129,7 @@ export const title_medium_rule = geist([
 
 export const title_small_rule = geist([
 	{
-		fontWeight: 540,
+		fontWeight: 400,
 		fontOptions: {
 			capHeight: 13,
 			lineGap: 12,
@@ -144,7 +144,7 @@ export const title_small_rule = geist([
 ]);
 export const label_large_rule = geist([
 	{
-		fontWeight: 600,
+		fontWeight: 500,
 		fontFeatureSettings: '"ss09"',
 		fontOptions: {
 			capHeight: 10,
@@ -161,7 +161,7 @@ export const label_large_rule = geist([
 
 export const label_medium_rule = geist([
 	{
-		fontWeight: 600,
+		fontWeight: 500,
 		fontFeatureSettings: '"ss09"',
 		fontOptions: {
 			capHeight: 9,
@@ -178,7 +178,7 @@ export const label_medium_rule = geist([
 
 export const label_small_rule = geist([
 	{
-		fontWeight: 600,
+		fontWeight: 500,
 		fontFeatureSettings: '"ss09"',
 		fontOptions: {
 			capHeight: 8,
