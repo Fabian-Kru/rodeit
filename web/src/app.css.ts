@@ -1,6 +1,7 @@
 import { style } from '@vanilla-extract/css';
-import { colors } from './styles/colors.css';
-import { lg } from './styles/screens.css';
+
+import { colors } from 'src/styles/colors.css.ts';
+import { lg } from 'src/styles/screens.css.ts';
 
 export const nav = style([
 	{
@@ -48,17 +49,5 @@ export const nav_link_container = style([
 	{
 		display: 'grid',
 		alignContent: 'center',
-	},
-]);
-
-export const nav_link = style([
-	{
-		display: 'block',
-		paddingTop: '0.25rem',
-		paddingBottom: '0.5rem',
-		borderBottomWidth: 2,
-		borderBottomStyle: 'solid',
-		borderBottomColor: colors.verdant[30],
-		':hover': {},
 	},
 ]);

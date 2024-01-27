@@ -21,7 +21,7 @@ import { useSearchParams } from '@solidjs/router';
 
 type OrderBy = 'rating' | 'ridden' | 'wanted';
 
-export default function() {
+export default function () {
 	const [searchParams, setSearchParams] = useSearchParams();
 
 	function page(): number {
@@ -44,7 +44,7 @@ export default function() {
 	}
 
 	// cablcs means coastersAndBucketListCounts
-	const [cablcs] = createResource(orderBy(), async (source) => {
+	const [cablcs] = createResource(orderBy(), async function (source) {
 		switch (source) {
 			case 'rating': // TODO: implement
 			case 'ridden': // TODO: implement

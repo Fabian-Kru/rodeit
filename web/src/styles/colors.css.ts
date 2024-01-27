@@ -4,6 +4,7 @@ export const colors = createGlobalTheme(':root', {
 	verdant: {
 		0: 'oklch(0% 0 0)',
 		30: 'oklch(30% 0.01 130)',
+		60: 'oklch(60% 0.01 130)',
 		90: 'oklch(90% 0.02 130)',
 		100: 'oklch(100%, 0, 0)',
 	},

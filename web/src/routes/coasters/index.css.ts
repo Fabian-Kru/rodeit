@@ -1,6 +1,7 @@
 import { createVar, style } from '@vanilla-extract/css';
-import { colors } from 'src/styles/colors.css';
-import { lg } from 'src/styles/screens.css';
+
+import { colors } from 'src/styles/colors.css.ts';
+import { lg } from 'src/styles/screens.css.ts';
 
 export const page = style([
 	lg({
@@ -57,7 +58,6 @@ export const coaster = style([
 export const coaster_details_meta = style([
 	{
 		alignSelf: 'start',
-		opacity: 0.7,
 	},
 ]);
 
