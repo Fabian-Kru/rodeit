@@ -5,3 +5,4 @@ connexion[swagger-ui,uvicorn,flask]~=3.0.5
 flask~=3.0.0
 python-jose[cryptography]
 SQLAlchemy~=2.0.23
+marshmallow~=3.20.2
