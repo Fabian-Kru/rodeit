@@ -1,0 +1,97 @@
+---
+import 'src/styles/global/mod.css.ts';
+import { label_large } from 'src/styles/atomic/fonts.css.ts';
+import { link } from 'src/styles/forms.css.ts';
+import { getUser } from 'src/session.ts';
+
+import { nav, nav_link_container, nav_pages, nav_ul, nav_user_actions } from './index.css.ts';
+
+const user = getUser(Astro);
+---
+
+<!doctype html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8" />
+		<meta
+			name="viewport"
+			content="width=device-width, initial-scale=1.0"
+		/>
+		<title>Rodeit</title>
+	</head>
+	<body>
+		<nav class={nav}>
+			<ul class={nav_ul}>
+				<li>
+					<ul class={nav_pages}>
+						<li class={nav_link_container}>
+							<a
+								href="/coasters"
+								class={link}
+							>
+								<p class={label_large}>Coasters</p>
+							</a>
+						</li>
+						<li class={nav_link_container}>
+							<a
+								href="/users"
+								class={link}
+							>
+								<p class={label_large}>Users</p>
+							</a>
+						</li>
+					</ul>
+				</li>
+				<li>
+					{
+						user ? (
+							<ul class={nav_user_actions}>
+								<li class={nav_link_container}>
+									<a
+										href="/profile"
+										class={link}
+									>
+										<p class={label_large}>Profile</p>
+									</a>
+								</li>
+								<li class={nav_link_container}>
+									<form
+										action="/logout"
+										method="post"
+									>
+										<button
+											type="submit"
+											class={link}
+										>
+											<p class={label_large}>Sign out</p>
+										</button>
+									</form>
+								</li>
+							</ul>
+						) : (
+							<ul class={nav_user_actions}>
+								<li class={nav_link_container}>
+									<a
+										href="/login"
+										class={link}
+									>
+										<p class={label_large}>Sign in</p>
+									</a>
+								</li>
+								<li class={nav_link_container}>
+									<a
+										href="/signup"
+										class={link}
+									>
+										<p class={label_large}>Sign up</p>
+									</a>
+								</li>
+							</ul>
+						)
+					}
+				</li>
+			</ul>
+		</nav>
+		<slot />
+	</body>
+</html>

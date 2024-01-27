@@ -13,10 +13,6 @@ globalStyle('body', {
 	backgroundColor: colors.verdant[30],
 	color: colors.verdant[90],
 	height: '100%',
-});
-
-globalStyle('#app', {
-	height: '100%',
 	display: 'grid',
 	gridTemplateRows: '4rem minmax(0, 1fr)',
 });

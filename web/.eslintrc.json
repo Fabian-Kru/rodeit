@@ -7,6 +7,8 @@
 		"eslint:recommended",
 		"plugin:@typescript-eslint/recommended",
 		"plugin:@typescript-eslint/strict",
+		"plugin:astro/recommended",
+		"plugin:astro/jsx-a11y-strict",
 		"prettier"
 	],
 	"parser": "@typescript-eslint/parser",
@@ -19,9 +21,17 @@
 		{
 			"files": ["*.ts", "*.tsx"],
 			"extends": ["plugin:solid/typescript", "plugin:jsx-a11y/strict"]
+		},
+		{
+			"files": "*.astro",
+			"parser": "astro-eslint-parser",
+			"parserOptions": {
+				"parser": "@typescript-eslint/parser",
+				"extraFileExtensions": [".astro"]
+			}
 		}
 	],
-	"plugins": ["@typescript-eslint", "solid"],
+	"plugins": ["@typescript-eslint", "astro", "solid"],
 	"rules": {
 		"@typescript-eslint/non-nullable-type-assertion-style": "off",
 		"@typescript-eslint/consistent-type-definitions": ["error", "type"],
