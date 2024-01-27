@@ -1,0 +1,12 @@
+version: '3.9'
+
+services:
+  app:
+    build: .
+    restart: always
+    volumes:
+      - ./records.db:/app/records.db
+    ports:
+      - 127.0.0.1:8000:8000
+    environment:
+      - JWT_SECRET=test

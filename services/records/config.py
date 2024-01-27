@@ -3,8 +3,12 @@
 import pathlib
 import connexion
 
+from os import environ
 from flask_sqlalchemy import SQLAlchemy
 from flask_marshmallow import Marshmallow
+
+
+JWT_TOKEN = environ['JWT_TOKEN']
 
 basedir = pathlib.Path(__file__).parent.resolve()
 connex_app = connexion.App(__name__, specification_dir=basedir)
