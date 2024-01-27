@@ -3,7 +3,7 @@ use utoipa::ToSchema;
 
 #[derive(Debug, Default, Serialize, Deserialize, ToSchema)]
 pub struct User {
-    pub id: i64,
+    pub id: Option<i64>,
     pub name: String,
     pub surname: String,
     pub username: String,
@@ -15,6 +15,21 @@ impl User {
         Default::default()
     }
 }
+
+#[derive(Debug, Default, Serialize, Deserialize, ToSchema)]
+pub struct UpdateUser {
+    pub name: Option<String>,
+    pub surname: Option<String>,
+    pub username: Option<String>,
+    pub password: Option<String>,
+}
+
+impl crate::models::UpdateUser {
+    pub fn new() -> crate::models::User {
+        Default::default()
+    }
+}
+
 #[derive(Serialize, Default, Deserialize, ToSchema)]
 pub struct Message {
     pub message: String,
