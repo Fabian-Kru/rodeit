@@ -46,8 +46,8 @@ export default function() {
 	// cablcs means coastersAndBucketListCounts
 	const [cablcs] = createResource(orderBy(), async (source) => {
 		switch (source) {
-			case 'rating':
-			case 'ridden':
+			case 'rating': // TODO: implement
+			case 'ridden': // TODO: implement
 			case 'wanted': {
 				const { data } = await client.GET('/bucket_list/');
 				if (data === undefined) {

@@ -11,7 +11,7 @@ export const page = style([
 
 export const aside = style([
 	{
-		paddingBlock: '1rem',
+		padding: '1rem',
 	},
 ]);
 
@@ -19,6 +19,10 @@ export const aside_link = style([
 	{
 		display: 'block',
 		padding: '1rem',
+		borderRadius: 4,
+		':hover': {
+			backgroundColor: colors.verdant[0],
+		},
 	},
 ]);
 
@@ -33,6 +37,7 @@ export const coasters = style([
 	{
 		padding: '1rem',
 		display: 'grid',
+		alignContent: 'start',
 		rowGap: '1rem',
 	},
 	lg({
