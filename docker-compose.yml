@@ -1,0 +1,23 @@
+services:
+  records:
+    build: ./services/records/
+    image: "records:latest"
+    volumes:
+      - /app/records.db:./db
+    ports:
+      - "8000:8000"
+    env_file: .env
+  user:
+    build: ./services/user/
+    image: "user:latest"
+    volumes:
+      - /app/test.db:./db
+    ports:
+      - "9001:9001"
+    env_file: .env
+  bucket_list:
+    build: ./services/bucket_list/
+    image: "bucket_list:latest"
+    ports:
+      - "3000:3000"
+    env_file: .env

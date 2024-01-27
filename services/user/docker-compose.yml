@@ -1,6 +1,6 @@
 services:
   user:
-    image: "user_service:latest"
+    image: "user:0.0.1"
     ports:
       - "9001:9001"
     env_file: .env
