@@ -5,9 +5,11 @@ services:
       - /db/records.db:/app/db
     ports:
       - "8000:8000"
+    environment:
+      - JWT_TOKEN=test
   user:
     build: ./services/user/
-    image: "gcr.hrz.tu-chemnitz.de/praktikum-scc/ws23-gruppe1/gruppe1/user:0.0.1"
+    image: "gcr.hrz.tu-chemnitz.de/praktikum-scc/ws23-gruppe1/gruppe1/user:0.0.2"
     volumes:
       - ./db/:/db
     ports:
