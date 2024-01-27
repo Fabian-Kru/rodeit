@@ -2,14 +2,14 @@ services:
   records:
     image: "gcr.hrz.tu-chemnitz.de/praktikum-scc/ws23-gruppe1/gruppe1/records:v1.f.a.0"
     volumes:
-      - /db/records.db:/app/records.db
+      - /db/records.db:/app/db
     ports:
       - "8000:8000"
   user:
     build: ./services/user/
     image: "gcr.hrz.tu-chemnitz.de/praktikum-scc/ws23-gruppe1/gruppe1/user:0.0.1"
     volumes:
-      - ./db/test.db:/test.db
+      - ./db/:/db
     ports:
       - "9001:9001"
     env_file: ./services/user/.env

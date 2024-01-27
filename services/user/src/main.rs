@@ -63,14 +63,11 @@ type Conn = Arc<Pool<Sqlite>>;
 async fn main() {
     let database_url = &env::var("DATABASE_URL").unwrap();
 
-
-
     match Sqlite::database_exists(&database_url).await.unwrap() {
         False => {
             sqlx::Sqlite::create_database(&database_url).await.expect("unable to create database");
         }
     }
-
 
     let pool = SqlitePool::connect(&database_url).await.unwrap();
     let state_pool = Arc::new(pool);
