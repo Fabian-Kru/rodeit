@@ -2,21 +2,19 @@ services:
   records:
     image: "gcr.hrz.tu-chemnitz.de/praktikum-scc/ws23-gruppe1/gruppe1/records:v1.f.a.0"
     volumes:
-      - /app/records.db:./db
+      - /db/records.db:./app/records.db
     ports:
       - "8000:8000"
-    env_file: .env
   user:
     build: ./services/user/
     image: "gcr.hrz.tu-chemnitz.de/praktikum-scc/ws23-gruppe1/gruppe1/user:0.0.1"
     volumes:
-      - /app/test.db:./db
+      - ./db:/app/test.db:
     ports:
       - "9001:9001"
-    env_file: .env
+    env_file: ./services/user/.env
   bucket_list:
     build: ./services/bucket_list/
     image: "gcr.hrz.tu-chemnitz.de/praktikum-scc/ws23-gruppe1/gruppe1/bucket_list:0.1.0"
     ports:
       - "3000:3000"
-    env_file: .env
