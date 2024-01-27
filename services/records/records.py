@@ -5,7 +5,7 @@ from models import Record, record_schema
 from datetime import datetime
 
 
-def get(token_info = True, sort: str = None, limit: int = None, start: datetime = None, end: datetime = None):
+def get(token_info, sort: str = None, limit: int = None, start: datetime = None, end: datetime = None):
     if not token_info:
         abort(401, "Not authorized")
 
