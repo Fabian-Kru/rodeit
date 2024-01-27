@@ -61,7 +61,7 @@ type Conn = Arc<Pool<Sqlite>>;
 
 #[tokio::main]
 async fn main() {
-    let database_url = "sqlite:///db/user.db";
+    let database_url = &env::var("DATABASE_URL").unwrap();
 
     match Sqlite::database_exists(&database_url).await.unwrap() {
         False => {
