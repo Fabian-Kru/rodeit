@@ -54,8 +54,9 @@
 
 ## Plattformen
 - GitLab
-- GitHub-Pages
-- Scalar
+-- GitLab Registry (Speichern der Docker-Images)
+- GitHub-Pages (Hosten von Scalar)
+- Scalar (OpenAPI-Schnittstellenbeschreibung)
 - Docker
 
 ## Services
@@ -103,10 +104,10 @@
 ## `/signup`
 
 
-## `/login`
+## `/login` 
 ![](https://md.ascii.coffee/uploads/87d4d68e-5a2c-4f52-a702-90c6cca090b2.png)
 
-## `/logout`
+## `/logout` 
 Loggt den Nutzer aus und leitet auf `/` weiter.
 
 ## `/coaster`
