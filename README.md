@@ -1,6 +1,6 @@
 # Rodeit
 
-**[Website](https://rodeit.mabezi.de/)** &mdash; **[API Reference](https://emonadeo.github.io/rodeit/)**; **[Docu](documentation.md)**
+**[Website](https://rodeit.mabezi.de/)** &mdash; **[API Reference](https://emonadeo.github.io/rodeit/)** &mdash; **[Docu](documentation.md)**
 
 - 🎢 Record what coasters you have ridden
 - 📋 Create a bucket list with coasters you want to ride
