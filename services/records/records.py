@@ -37,6 +37,7 @@ def aggregated():
         db.session
         .query(Record.rollercoaster_id, func.count(Record.rollercoaster_id).label('count'))
         .group_by(Record.rollercoaster_id)
+        .order_by('count DESC')
     )
 
     return record_count_schema.dump(c)
