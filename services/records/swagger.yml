@@ -72,14 +72,6 @@ components:
       bearerFormat: JWT
       x-bearerInfoFunc: api.decode_token
 paths:
-  "/":
-    get:
-      summary: TODO
-      description: TODO
-      operationId: "record.main"
-      responses:
-        "200":
-          description: ""
   /record:
     post:
       summary: Submit a Record
@@ -113,8 +105,6 @@ paths:
           description: "Access token is missing or invalid"
         "404":
           description: "Not found"
-      security:
-        - jwt: []
   /user/{user_id}:
     get:
       summary: Get Records by User
@@ -129,8 +119,6 @@ paths:
           description: "Access token is missing or invalid"
         "404":
           description: "Not found"
-      security:
-        - jwt: []
   /rollercoaster/{rollercoaster_id}:
     get:
       summary: Get Records by Coaster
@@ -145,8 +133,6 @@ paths:
           description: "Access token is missing or invalid"
         "404":
           description: "Not found"
-      security:
-        - jwt: []
   /records:
     get:
       summary: Get all Records
@@ -162,8 +148,6 @@ paths:
           description: ""
         '401':
           description: "Access token is missing or invalid"
-      security:
-        - jwt: []
   /records/aggregate:
     get:
       summary: Aggregate how often a roller coaster has been ridden
@@ -174,5 +158,3 @@ paths:
           description: ""
         '401':
           description: "Access token is missing or invalid"
-      security:
-        - jwt: []

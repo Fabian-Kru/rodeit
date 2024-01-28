@@ -1,6 +1,6 @@
 # Rodeit
 
-**[Website](http://185.128.118.107/)** &mdash; **[API Reference](https://emonadeo.github.io/rodeit/)**
+**[Website](https://rodeit.mabezi.de/)** &mdash; **[API Reference](https://emonadeo.github.io/rodeit/)**
 
 - 🎢 Record what coasters you have ridden
 - 📋 Create a bucket list with coasters you want to ride

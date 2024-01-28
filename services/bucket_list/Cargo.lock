@@ -285,7 +285,7 @@ dependencies = [
  "itoa",
  "matchit",
  "memchr",
- "mime 0.3.17",
+ "mime",
  "percent-encoding",
  "pin-project-lite",
  "rustversion",
@@ -314,7 +314,7 @@ dependencies = [
  "itoa",
  "matchit",
  "memchr",
- "mime 0.3.17",
+ "mime",
  "percent-encoding",
  "pin-project-lite",
  "rustversion",
@@ -341,7 +341,7 @@ dependencies = [
  "futures-util",
  "http 0.2.11",
  "http-body 0.4.6",
- "mime 0.3.17",
+ "mime",
  "rustversion",
  "tower-layer",
  "tower-service",
@@ -359,7 +359,7 @@ dependencies = [
  "http 1.0.0",
  "http-body 1.0.0",
  "http-body-util",
- "mime 0.3.17",
+ "mime",
  "pin-project-lite",
  "rustversion",
  "sync_wrapper",
@@ -531,13 +531,12 @@ dependencies = [
 
 [[package]]
 name = "bucket_list"
-version = "0.1.0"
+version = "0.2.0"
 dependencies = [
  "aide",
  "anyhow",
  "auth",
  "axum 0.7.4",
- "captain_coaster",
  "futures",
  "jsonwebtoken",
  "reqwest",
@@ -604,28 +603,6 @@ dependencies = [
  "cc",
  "libc",
  "pkg-config",
-]
-
-[[package]]
-name = "captain_coaster"
-version = "0.1.0"
-dependencies = [
- "async-trait",
- "bytes",
- "futures",
- "http 0.2.11",
- "lazy_static",
- "log",
- "mime 0.4.0-a.0",
- "mime_guess",
- "reqwest",
- "serde",
- "serde_json",
- "serde_yaml",
- "thiserror",
- "tokio",
- "tokio-util",
- "url",
 ]
 
 [[package]]
@@ -1958,26 +1935,12 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "6877bb514081ee2a7ff5ef9de3281f14a4dd4bceac4c09388074a6b5df8a139a"
 
 [[package]]
-name = "mime"
-version = "0.4.0-a.0"
-source = "git+https://github.com/hyperium/mime.git#938484de95445a2af931515d2b7252612c575da7"
-dependencies = [
- "mime-parse",
- "quoted-string",
-]
-
-[[package]]
-name = "mime-parse"
-version = "0.0.0"
-source = "git+https://github.com/hyperium/mime.git#938484de95445a2af931515d2b7252612c575da7"
-
-[[package]]
 name = "mime_guess"
 version = "2.0.4"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "4192263c238a5f0d0c6bfd21f336a313a4ce1c450542449ca191bb657b4642ef"
 dependencies = [
- "mime 0.3.17",
+ "mime",
  "unicase",
 ]
 
@@ -2516,27 +2479,12 @@ dependencies = [
 ]
 
 [[package]]
-name = "quick-error"
-version = "1.2.3"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "a1d01941d82fa2ab50be1e79e6714289dd7cde78eba4c074bc5a4374f650dfe0"
-
-[[package]]
 name = "quote"
 version = "1.0.35"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "291ec9ab5efd934aaf503a6466c5d5251535d108ee747472c3977cc5acc868ef"
 dependencies = [
  "proc-macro2",
-]
-
-[[package]]
-name = "quoted-string"
-version = "0.2.2"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "9586f8867f39941d8e796c18340a9cb5221a018df021169dc3e61c87d9f5f567"
-dependencies = [
- "quick-error",
 ]
 
 [[package]]
@@ -2690,7 +2638,7 @@ dependencies = [
  "ipnet",
  "js-sys",
  "log",
- "mime 0.3.17",
+ "mime",
  "mime_guess",
  "native-tls",
  "once_cell",
@@ -3211,19 +3159,6 @@ dependencies = [
  "proc-macro2",
  "quote",
  "syn 2.0.48",
-]
-
-[[package]]
-name = "serde_yaml"
-version = "0.9.30"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "b1bf28c79a99f70ee1f1d83d10c875d2e70618417fda01ad1785e027579d9d38"
-dependencies = [
- "indexmap 2.1.0",
- "itoa",
- "ryu",
- "serde",
- "unsafe-libyaml",
 ]
 
 [[package]]
@@ -3995,12 +3930,6 @@ name = "unicode-xid"
 version = "0.2.4"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "f962df74c8c05a667b5ee8bcf162993134c104e96440b663c8daa176dc772d8c"
-
-[[package]]
-name = "unsafe-libyaml"
-version = "0.2.10"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "ab4c90930b95a82d00dc9e9ac071b4991924390d46cbd0dfe566148667605e4b"
 
 [[package]]
 name = "untrusted"
