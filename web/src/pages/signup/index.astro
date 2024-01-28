@@ -1,0 +1,61 @@
+---
+import BaseLayout from 'src/components/layouts/base/index.astro';
+import { btn, input_text, link } from 'src/styles/forms.css.ts';
+import { label_large } from 'src/styles/atomic/fonts.css.ts';
+
+import { actions, form, page } from './index.css.ts';
+import { FIELD_PASSWORD, FIELD_USERNAME, FIELD_NAME, FIELD_SURNAME } from './action.ts';
+---
+
+<BaseLayout>
+	<div class={page}>
+		<form
+			class={form}
+			action="/signup/action"
+			method="post"
+		>
+			<input
+				class={input_text}
+				type="text"
+				placeholder="Username"
+				name={FIELD_USERNAME}
+				required
+			/>
+			<input
+				class={input_text}
+				type="text"
+				placeholder="First Name"
+				name={FIELD_NAME}
+				required
+			/>
+			<input
+				class={input_text}
+				type="text"
+				placeholder="Last Name"
+				name={FIELD_SURNAME}
+				required
+			/>
+			<input
+				class={input_text}
+				type="password"
+				placeholder="Password"
+				name={FIELD_PASSWORD}
+				required
+			/>
+			<div class={actions}>
+				<a
+					href="/login"
+					class={link}
+				>
+					<div class={label_large}>Sign in</div>
+				</a>
+				<button
+					type="submit"
+					class={btn}
+				>
+					Sign up
+				</button>
+			</div>
+		</form>
+	</div>
+</BaseLayout>

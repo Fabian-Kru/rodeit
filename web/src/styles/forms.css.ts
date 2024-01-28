@@ -51,5 +51,11 @@ export const btn = style([
 		borderStyle: 'solid',
 		borderColor: colors.verdant[90],
 		boxShadow: `0 4px 0 0 ${colors.verdant[0]}`,
+
+		selectors: {
+			'&:hover, &:focus-visible': {
+				backgroundColor: colors.verdant[90],
+			},
+		},
 	},
 ]);
