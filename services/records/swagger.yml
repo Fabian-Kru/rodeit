@@ -164,3 +164,15 @@ paths:
           description: "Access token is missing or invalid"
       security:
         - jwt: []
+  /records/aggregate:
+    get:
+      summary: Aggregate how often a roller coaster has been ridden
+      description: Aggregate how often a roller coaster has been ridden
+      operationId: "records.aggregated"
+      responses:
+        "200":
+          description: ""
+        '401':
+          description: "Access token is missing or invalid"
+      security:
+        - jwt: []

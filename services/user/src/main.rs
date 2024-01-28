@@ -13,6 +13,7 @@ use axum::extract::{Path, State};
 use axum::routing::patch;
 
 use sqlx::{Error, Pool, Sqlite, SqlitePool};
+use sqlx::migrate::MigrateDatabase;
 use sqlx::sqlite::SqliteQueryResult;
 use utoipa::{Modify, OpenApi};
 use utoipa::openapi::security::{HttpAuthScheme, HttpBuilder, SecurityScheme};
@@ -61,8 +62,14 @@ type Conn = Arc<Pool<Sqlite>>;
 #[tokio::main]
 async fn main() {
     let database_url = &env::var("DATABASE_URL").unwrap();
-    let pool = SqlitePool::connect(&database_url).await.unwrap();
 
+    match Sqlite::database_exists(&database_url).await.unwrap() {
+        False => {
+            sqlx::Sqlite::create_database(&database_url).await.expect("unable to create database");
+        }
+    }
+
+    let pool = SqlitePool::connect(&database_url).await.unwrap();
     let state_pool = Arc::new(pool);
 
     sqlx::migrate!("./migrations")
