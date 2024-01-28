@@ -1,14 +1,21 @@
 ---
 import BaseLayout from 'src/components/layouts/base/index.astro';
 import { btn, input_text, link } from 'src/styles/forms.css.ts';
-import { label_large } from 'src/styles/atomic/fonts.css.ts';
+import { body_large, label_large } from 'src/styles/atomic/fonts.css.ts';
 
-import { actions, form, page } from './index.css.ts';
+import { actions, alert, form, page } from './index.css.ts';
 import { FIELD_PASSWORD, FIELD_USERNAME } from './action.ts';
+
+const registered = Astro.url.searchParams.has('registered');
 ---
 
 <BaseLayout>
 	<div class={page}>
+		{
+			registered && (
+				<p class:list={[body_large, alert]}>Registered successfully! You can now sign in.</p>
+			)
+		}
 		<form
 			class={form}
 			action="/login/action"

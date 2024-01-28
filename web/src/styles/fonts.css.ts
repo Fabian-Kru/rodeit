@@ -27,6 +27,7 @@ export const geist = createFont(metrics_geist);
 
 export const display_large_rule = geist([
 	{
+		fontWeight: 200,
 		letterSpacing: -0.5,
 		fontOptions: {
 			capHeight: 40,
@@ -49,33 +50,36 @@ export const display_large_rule = geist([
 
 export const display_medium_rule = geist([
 	{
+		fontWeight: 200,
+		letterSpacing: -0.5,
 		fontOptions: {
-			capHeight: 30,
+			capHeight: 26,
 			lineGap: 16,
 		},
 	},
 	sm<FontRule>({
 		fontOptions: {
-			capHeight: 32,
+			capHeight: 28,
 			lineGap: 16,
 		},
 	}),
 	lg<FontRule>({
 		fontOptions: {
-			capHeight: 48,
-			lineGap: 24,
+			capHeight: 28,
+			lineGap: 16,
 		},
 	}),
 	xl<FontRule>({
 		fontOptions: {
-			capHeight: 64,
-			lineGap: 32,
+			capHeight: 28,
+			lineGap: 16,
 		},
 	}),
 ]);
 
 export const display_small_rule = geist([
 	{
+		fontWeight: 200,
 		fontOptions: {
 			capHeight: 24,
 			lineGap: 16,

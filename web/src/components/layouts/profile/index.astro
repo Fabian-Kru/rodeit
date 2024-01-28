@@ -1,0 +1,54 @@
+---
+import BaseLayout from 'src/components/layouts/base/index.astro';
+import { label_large } from 'src/styles/atomic/fonts.css.ts';
+import { btn } from 'src/styles/forms.css.ts';
+import { ariaCurrent } from 'src/aria_current.ts';
+
+import { page, aside, aside_link, main, form } from './index.css.ts';
+---
+
+<BaseLayout>
+	<div class={page}>
+		<aside class={aside}>
+			<ul>
+				<li>
+					<a
+						class={aside_link}
+						href="/profile"
+						aria-current={ariaCurrent(Astro, new RegExp('^/profile/?$'))}
+					>
+						<p class={label_large}>My Account</p>
+					</a>
+				</li>
+				<li>
+					<a
+						class={aside_link}
+						href="/profile/records"
+						aria-current={ariaCurrent(Astro, new RegExp('^/profile/records'))}
+					>
+						<p class={label_large}>My Records</p>
+					</a>
+				</li>
+				<li>
+					<a
+						class={aside_link}
+						href="/profile/bucket_list"
+						aria-current={ariaCurrent(Astro, new RegExp('^/profile/bucket_list'))}
+					>
+						<p class={label_large}>My Bucket List</p>
+					</a>
+				</li>
+			</ul>
+			<form
+				class={form}
+				action="/profile/delete"
+				method="post"
+			>
+				<button class={btn}>Delete Account</button>
+			</form>
+		</aside>
+		<main class={main}>
+			<slot />
+		</main>
+	</div>
+</BaseLayout>

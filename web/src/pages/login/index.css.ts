@@ -7,12 +7,13 @@ export const page = style([
 	{
 		display: 'grid',
 		placeContent: 'center',
+		gridTemplateColumns: '16rem',
+		rowGap: '1rem',
 	},
 ]);
 
 export const form = style([
 	{
-		width: '16rem',
 		display: 'grid',
 		rowGap: '1rem',
 	},
@@ -27,6 +28,15 @@ export const actions = style([
 		gap: '1rem',
 	},
 ]);
+
+export const alert = style([
+	{
+		padding: '1rem',
+		backgroundColor: colors.verdant[0],
+		borderRadius: 4,
+		minWidth: 0,
+	}
+])
 
 globalStyle(`${page} ${link}`, {
 	borderBottomColor: colors.verdant[90],

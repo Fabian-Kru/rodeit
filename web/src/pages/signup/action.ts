@@ -51,5 +51,5 @@ export async function POST({ request, redirect }: APIContext) {
 			statusText: 'cannot register with these credentials',
 		});
 	}
-	return redirect('/login');
+	return redirect('/login?registered');
 }

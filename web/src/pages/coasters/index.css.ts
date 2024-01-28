@@ -1,7 +1,10 @@
 import { createVar, globalStyle, style } from '@vanilla-extract/css';
 
 import { colors } from 'src/styles/colors.css.ts';
+import { durations, ease } from 'src/styles/motion.css';
 import { lg } from 'src/styles/screens.css.ts';
+
+export const coaster_details_image = createVar();
 
 export const page = style([
 	lg({
@@ -72,24 +75,6 @@ export const coaster = style([
 	},
 ]);
 
-export const coaster_details_meta = style([
-	{
-		alignSelf: 'start',
-	},
-]);
-
-export const coaster_details_park = style([
-	{
-		display: 'grid',
-		gap: '0.5rem',
-		justifyContent: 'start',
-		alignItems: 'center',
-		gridAutoFlow: 'column',
-	},
-]);
-
-export const coaster_details_image = createVar();
-
 export const coaster_details = style([
 	{
 		display: 'grid',
@@ -106,6 +91,31 @@ export const coaster_details = style([
 		borderStyle: 'solid',
 		borderWidth: 2,
 		boxShadow: `0 4px 0 0 ${colors.verdant[0]}`,
+		transitionProperty: 'translate',
+		transitionTimingFunction: ease.standard,
+		transitionDuration: durations.short,
+		selectors: {
+			'&:hover, &:focus-visible': {
+				translate: '0 -2px',
+				boxShadow: `0 6px 0 0 ${colors.verdant[0]}`,
+			},
+		},
+	},
+]);
+
+export const coaster_details_meta = style([
+	{
+		alignSelf: 'start',
+	},
+]);
+
+export const coaster_details_park = style([
+	{
+		display: 'grid',
+		gap: '0.5rem',
+		justifyContent: 'start',
+		alignItems: 'center',
+		gridAutoFlow: 'column',
 	},
 ]);
 

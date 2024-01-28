@@ -1,0 +1,25 @@
+---
+import { rodeit, captainCoaster } from 'src/api/mod.ts';
+import ProfileLayout from 'src/components/layouts/profile/index.astro';
+import { getUser } from 'src/session';
+import { display_medium } from 'src/styles/atomic/fonts.css.ts';
+
+const user = getUser(Astro);
+
+if (!user) {
+	return Astro.redirect('/login');
+}
+
+const userId = Number(user.sub);
+const { data } = await rodeit.GET('/records/user/{user_id}', {
+	params: {
+		path: {
+			user_id: userId,
+		},
+	},
+});
+---
+
+<ProfileLayout>
+	<h1 class={display_medium}>My Records</h1>
+</ProfileLayout>

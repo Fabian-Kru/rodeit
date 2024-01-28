@@ -40,6 +40,7 @@ const search = Astro.url.searchParams.get(FIELD_SEARCH);
 const orderBy = orderByResult.output;
 
 type Coaster = {
+	id: number;
 	count?: number;
 	name?: string;
 	image?: string;
@@ -77,6 +78,7 @@ if (search) {
 			const image = data?.mainImage?.path;
 
 			const _coaster: Coaster = {
+				id: coaster.id as number,
 				name: coaster.name,
 				park: coaster.park,
 				image,
@@ -104,6 +106,7 @@ if (search) {
 						},
 					});
 					const coaster: Coaster = {
+						id: Number(coasterIdAndCount.rollercoaster_id),
 						count: coasterIdAndCount.count,
 						name: data?.name,
 						image: data?.mainImage?.path,
@@ -135,6 +138,7 @@ if (search) {
 						},
 					});
 					const coaster: Coaster = {
+						id: coasterIdAndCount.coaster_id,
 						count: coasterIdAndCount.count,
 						name: data?.name,
 						image: data?.mainImage?.path,
@@ -213,7 +217,8 @@ function localizeCount(count: number) {
 					coasters.map((coaster) => {
 						return (
 							<li class={coaster_style}>
-								<div
+								<a
+									href={`/coasters/${coaster.id}`}
 									class={coaster_details}
 									style={assignInlineVars({
 										[coaster_details_image]: `url(${picturesBaseUrl}${coaster.image})`,
@@ -238,7 +243,7 @@ function localizeCount(count: number) {
 										<p class={body_large}>{coaster.park?.name}</p>
 									</div>
 									<p class={title_medium}>{coaster.name}</p>
-								</div>
+								</a>
 								{user && (
 									<ul class={coaster_actions}>
 										<li />

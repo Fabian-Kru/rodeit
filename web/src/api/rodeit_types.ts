@@ -211,7 +211,7 @@ export interface paths {
      * Login
      * @description Login
      *
-     * Login with username and password and receive a JWT
+     * Login with username and password and return JWT
      */
     post: operations["login"];
   };
@@ -230,8 +230,6 @@ export interface paths {
      * @description Delete a User by ID
      */
     delete: operations["delete_user"];
-  };
-  "/users/user/:user_id/": {
     /**
      * Update a User by ID
      * @description Update a User by ID
@@ -270,7 +268,7 @@ export interface components {
     };
     User: {
       /** Format: int64 */
-      id: number;
+      id?: number | null;
       name: string;
       password: string;
       surname: string;
@@ -449,7 +447,7 @@ export interface operations {
    * Login
    * @description Login
    *
-   * Login with username and password and receive a JWT
+   * Login with username and password and return JWT
    */
   login: {
     requestBody: {
@@ -465,7 +463,7 @@ export interface operations {
         };
       };
       /** @description user not found and/or password not valid */
-      400: {
+      401: {
         content: never;
       };
     };
@@ -520,6 +518,11 @@ export interface operations {
    * @description Update a User by ID
    */
   patch_user: {
+    requestBody: {
+      content: {
+        "application/json": components["schemas"]["UpdateUser"];
+      };
+    };
     responses: {
       /** @description operation successful */
       200: {
