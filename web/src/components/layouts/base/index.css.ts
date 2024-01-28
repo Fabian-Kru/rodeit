@@ -12,8 +12,7 @@ export const nav = style([
 		zIndex: 1,
 	},
 	lg({
-		paddingLeft: '16rem',
-		paddingRight: '2rem',
+		paddingInline: '2rem',
 	}),
 ]);
 

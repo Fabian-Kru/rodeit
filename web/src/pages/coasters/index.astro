@@ -10,17 +10,21 @@ import { body_large, label_large, title_medium } from 'src/styles/atomic/fonts.c
 
 import {
 	aside,
+	aside_form,
 	aside_link,
-	coaster,
+	coaster as coaster_style,
 	coaster_actions,
 	coaster_details,
 	coaster_details_image,
 	coaster_details_meta,
 	coaster_details_park,
-	coasters,
+	coasters as coasters_style,
 	main,
 	page as page_style,
 } from './index.css.ts';
+import { btn, input_text } from 'src/styles/forms.css';
+
+const FIELD_SEARCH = 'search';
 
 const OrderBySchema = union([literal('ridden'), literal('wanted')]);
 type OrderBy = Output<typeof OrderBySchema>;
@@ -28,63 +32,122 @@ type OrderBy = Output<typeof OrderBySchema>;
 const orderByResult = safeParse(OrderBySchema, Astro.url.searchParams.get('orderBy'));
 
 if (!orderByResult.success) {
-	return Astro.redirect('/coasters/?orderBy=ridden');
+	Astro.url.searchParams.set('orderBy', 'ridden');
+	return Astro.redirect(Astro.url);
 }
 
+const search = Astro.url.searchParams.get(FIELD_SEARCH);
 const orderBy = orderByResult.output;
 
-type Coaster = Awaited<ReturnType<typeof captainCoaster.GET<'/api/coasters/{id}'>>>;
-
-type CoasterAndCount = {
-	coaster: Coaster;
-	count: number;
+type Coaster = {
+	count?: number;
+	name?: string;
+	image?: string;
+	park?: {
+		name?: string;
+		country?: string;
+	};
 };
 
-let coastersAndCounts: CoasterAndCount[] = [];
-switch (orderBy) {
-	case 'ridden': {
-		const { data } = await rodeit.GET('/records/records/aggregate');
-		if (!data) {
-			return new Response(null, {
-				status: 500,
-				statusText: 'failed to load coasters',
-			});
-		}
-		coastersAndCounts = await Promise.all(
-			data.map(async (coasterIdAndCount) => ({
-				coaster: await captainCoaster.GET('/api/coasters/{id}', {
-					params: {
-						path: {
-							id: String(coasterIdAndCount.rollercoaster_id),
-						},
-					},
-				}),
-				count: coasterIdAndCount.count,
-			}))
-		);
-		break;
+let coasters: Coaster[] = [];
+
+if (search) {
+	const { data } = await captainCoaster.GET('/api/coasters', {
+		params: {
+			query: {
+				name: search,
+			},
+		},
+	});
+	if (!data) {
+		return new Response(null, {
+			status: 500,
+			statusText: 'failed to load coasters',
+		});
 	}
-	case 'wanted': {
-		const { data } = await rodeit.GET('/bucket_list/');
-		if (!data) {
-			return new Response(null, {
-				status: 500,
-				statusText: 'failed to load coasters',
-			});
-		}
-		coastersAndCounts = await Promise.all(
-			data.map(async (coasterIdAndCount) => ({
-				coaster: await captainCoaster.GET('/api/coasters/{id}', {
-					params: {
-						path: {
-							id: String(coasterIdAndCount.coaster_id),
-						},
+	coasters = await Promise.all(
+		data['hydra:member'].map(async (coaster) => {
+			const { data } = await captainCoaster.GET('/api/coasters/{id}', {
+				params: {
+					path: {
+						id: String(coaster.id),
 					},
-				}),
-				count: coasterIdAndCount.count,
-			}))
-		);
-		break;
+				},
+			});
+			const image = data?.mainImage?.path;
+
+			const _coaster: Coaster = {
+				name: coaster.name,
+				park: coaster.park,
+				image,
+			};
+			return _coaster;
+		})
+	);
+} else {
+	switch (orderBy) {
+		case 'ridden': {
+			const { data } = await rodeit.GET('/records/records/aggregate');
+			if (!data) {
+				return new Response(null, {
+					status: 500,
+					statusText: 'failed to load coasters',
+				});
+			}
+			coasters = await Promise.all(
+				data.map(async (coasterIdAndCount) => {
+					const { data } = await captainCoaster.GET('/api/coasters/{id}', {
+						params: {
+							path: {
+								id: String(coasterIdAndCount.rollercoaster_id),
+							},
+						},
+					});
+					const coaster: Coaster = {
+						count: coasterIdAndCount.count,
+						name: data?.name,
+						image: data?.mainImage?.path,
+						park: data?.park && {
+							name: data.park.name,
+							country: data.park.country?.name,
+						},
+					};
+					return coaster;
+				})
+			);
+			break;
+		}
+		case 'wanted': {
+			const { data } = await rodeit.GET('/bucket_list/');
+			if (!data) {
+				return new Response(null, {
+					status: 500,
+					statusText: 'failed to load coasters',
+				});
+			}
+			coasters = await Promise.all(
+				data.map(async (coasterIdAndCount) => {
+					const { data } = await captainCoaster.GET('/api/coasters/{id}', {
+						params: {
+							path: {
+								id: String(coasterIdAndCount.coaster_id),
+							},
+						},
+					});
+					const coaster: Coaster = {
+						count: coasterIdAndCount.count,
+						name: data?.name,
+						image: data?.mainImage?.path,
+						park: data?.park && {
+							name: data.park.name,
+							country: data.park.country?.name,
+						},
+					};
+					return coaster;
+				})
+			);
+			break;
+		}
 	}
 }
 
@@ -103,11 +166,32 @@ function localizeCount(count: number) {
 <BaseLayout>
 	<div class={page_style}>
 		<aside class={aside}>
+			<form
+				class={aside_form}
+				action="/coasters"
+				method="get"
+			>
+				<input
+					class={input_text}
+					type="search"
+					placeholder="Search Coasters"
+					name={FIELD_SEARCH}
+					value={search}
+					required
+				/>
+				<button
+					type="submit"
+					class={btn}
+				>
+					Search
+				</button>
+			</form>
 			<ul>
 				<li>
 					<a
 						class={aside_link}
 						href="?orderBy=ridden"
+						aria-current={orderBy === 'ridden' && 'page'}
 					>
 						<p class={label_large}>Most Ridden</p>
 					</a>
@@ -116,6 +200,7 @@ function localizeCount(count: number) {
 					<a
 						class={aside_link}
 						href="?orderBy=wanted"
+						aria-current={orderBy === 'wanted' && 'page'}
 					>
 						<p class={label_large}>Most Wanted</p>
 					</a>
@@ -123,34 +208,36 @@ function localizeCount(count: number) {
 			</ul>
 		</aside>
 		<main class={main}>
-			<ol class={coasters}>
+			<ol class={coasters_style}>
 				{
-					coastersAndCounts.map((coasterAndCount) => {
+					coasters.map((coaster) => {
 						return (
-							<li class={coaster}>
+							<li class={coaster_style}>
 								<div
 									class={coaster_details}
 									style={assignInlineVars({
-										[coaster_details_image]: `url(${picturesBaseUrl}${coasterAndCount.coaster.data?.mainImage?.path})`,
+										[coaster_details_image]: `url(${picturesBaseUrl}${coaster.image})`,
 									})}
 								>
-									<p class={`${coaster_details_meta} ${body_large}`}>
-										{localizeCount(coasterAndCount.count)}
-									</p>
+									{coaster.count ? (
+										<p class={`${coaster_details_meta} ${body_large}`}>
+											{localizeCount(coaster.count)}
+										</p>
+									) : (
+										<div />
+									)}
 									<div class={coaster_details_park}>
-										{coasterAndCount.coaster.data?.park?.country?.name && (
+										{coaster.park?.country && (
 											<img
 												height={12}
 												width={18}
-												alt={`${coasterAndCount.coaster.data.park.country.name} flag`}
-												src={getCountryFlagUrl(
-													coasterAndCount.coaster.data.park.country.name.slice(8) as CountryName
-												)}
+												alt={`${coaster.park.country} flag`}
+												src={getCountryFlagUrl(coaster.park.country.slice(8) as CountryName)}
 											/>
 										)}
-										<p class={body_large}>{coasterAndCount.coaster.data?.park?.name}</p>
+										<p class={body_large}>{coaster.park?.name}</p>
 									</div>
-									<p class={title_medium}>{coasterAndCount.coaster.data?.name}</p>
+									<p class={title_medium}>{coaster.name}</p>
 								</div>
 								{user && (
 									<ul class={coaster_actions}>

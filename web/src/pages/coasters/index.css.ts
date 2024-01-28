@@ -1,4 +1,4 @@
-import { createVar, style } from '@vanilla-extract/css';
+import { createVar, globalStyle, style } from '@vanilla-extract/css';
 
 import { colors } from 'src/styles/colors.css.ts';
 import { lg } from 'src/styles/screens.css.ts';
@@ -7,22 +7,40 @@ export const page = style([
 	lg({
 		display: 'grid',
 		gridTemplateColumns: '16rem 1fr',
+		gap: '2rem',
+		paddingInline: '2rem',
 	}),
 ]);
 
 export const aside = style([
 	{
-		padding: '1rem',
+		display: 'grid',
+		rowGap: '2rem',
+		alignContent: 'start',
+		paddingBlock: '2rem',
 	},
 ]);
+
+export const aside_form = style([
+	{
+		display: 'grid',
+		rowGap: '1rem',
+	},
+]);
+
+globalStyle(`${aside_form} button[type=submit]`, {
+	justifySelf: 'end',
+});
 
 export const aside_link = style([
 	{
 		display: 'block',
 		padding: '1rem',
 		borderRadius: 4,
-		':hover': {
-			backgroundColor: colors.verdant[0],
+		selectors: {
+			'&[aria-current="page"], &:hover, &:focus-visible': {
+				backgroundColor: colors.verdant[0],
+			},
 		},
 	},
 ]);
@@ -36,15 +54,14 @@ export const main = style([
 
 export const coasters = style([
 	{
-		padding: '1rem',
+		paddingBlock: '1rem',
 		display: 'grid',
 		alignContent: 'start',
 		rowGap: '1rem',
 	},
 	lg({
 		paddingInline: 0,
-		paddingBlock: '1rem',
-		paddingRight: '16rem',
+		paddingBlock: '2rem',
 	}),
 ]);
 
@@ -80,7 +97,7 @@ export const coaster_details = style([
 		alignContent: 'end',
 		padding: '1rem',
 		gap: '1rem',
-		aspectRatio: '2 / 1',
+		height: '12rem',
 		backgroundImage: `linear-gradient(to right top, ${colors.verdant[30]}, oklch(0% 0 0 / 0)), ${coaster_details_image}`,
 		backgroundSize: 'cover',
 		backgroundPosition: 'center',

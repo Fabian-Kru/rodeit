@@ -6,8 +6,8 @@ import { colors } from 'src/styles/colors.css.ts';
 export const input_text = style([
 	label_large,
 	{
-		// TODO: don't fix the width
-		width: '16rem',
+		minWidth: '0',
+		width: 'auto',
 		height: '42px',
 		paddingInline: '1rem',
 		borderRadius: 4,
@@ -30,8 +30,12 @@ export const link = style([
 		paddingBottom: '0.5rem',
 		borderBottomWidth: 2,
 		borderBottomStyle: 'solid',
-		borderBottomColor: colors.verdant[30],
-		':hover': {},
+		borderBottomColor: colors.verdant[60],
+		selectors: {
+			'&[aria-current="page"], &:hover, &:focus-visible': {
+				borderBottomColor: colors.verdant[30],
+			},
+		},
 	},
 ]);
 

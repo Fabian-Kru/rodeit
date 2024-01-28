@@ -3,6 +3,7 @@ import 'src/styles/global/mod.css.ts';
 import { label_large } from 'src/styles/atomic/fonts.css.ts';
 import { link } from 'src/styles/forms.css.ts';
 import { getUser } from 'src/session.ts';
+import { ariaCurrent } from 'src/aria_current.ts';
 
 import { nav, nav_link_container, nav_pages, nav_ul, nav_user_actions } from './index.css.ts';
 
@@ -28,6 +29,7 @@ const user = getUser(Astro);
 							<a
 								href="/coasters"
 								class={link}
+								aria-current={ariaCurrent(Astro, new RegExp('^/coasters'))}
 							>
 								<p class={label_large}>Coasters</p>
 							</a>
@@ -36,6 +38,7 @@ const user = getUser(Astro);
 							<a
 								href="/users"
 								class={link}
+								aria-current={ariaCurrent(Astro, new RegExp('^/users'))}
 							>
 								<p class={label_large}>Users</p>
 							</a>
@@ -50,6 +53,7 @@ const user = getUser(Astro);
 									<a
 										href="/profile"
 										class={link}
+										aria-current={ariaCurrent(Astro, new RegExp('^/profile'))}
 									>
 										<p class={label_large}>Profile</p>
 									</a>
@@ -74,6 +78,7 @@ const user = getUser(Astro);
 									<a
 										href="/login"
 										class={link}
+										aria-current={ariaCurrent(Astro, new RegExp('^/login'))}
 									>
 										<p class={label_large}>Sign in</p>
 									</a>
@@ -82,6 +87,7 @@ const user = getUser(Astro);
 									<a
 										href="/signup"
 										class={link}
+										aria-current={ariaCurrent(Astro, new RegExp('^/signup'))}
 									>
 										<p class={label_large}>Sign up</p>
 									</a>
