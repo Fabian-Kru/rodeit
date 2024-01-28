@@ -102,19 +102,27 @@
 
 
 ## `/signup`
+Registrierung von Nutzern (Benutzername, Vorname, Nachname, Passwort)
+
+![](https://md.ascii.coffee/uploads/f3b5caf3-46f7-4938-9524-9ee1f5412fec.png)
 
 
 ## `/login` 
+Login durch Benutzernamen und Passwort
+
 ![](https://md.ascii.coffee/uploads/87d4d68e-5a2c-4f52-a702-90c6cca090b2.png)
 
 ## `/logout` 
 Loggt den Nutzer aus und leitet auf `/` weiter.
 
 ## `/coaster`
-![](https://md.ascii.coffee/uploads/23908e18-40ec-4609-826f-3c0473596f69.png)
+Zeigt alle bekannten Coaster an. Sortierbar nach: Meiste Fahrten, Beliebtheit
+
+![](https://md.ascii.coffee/uploads/093e5c98-bb24-4d46-adb4-bd812cd3a27e.png)
 
 
 ## `/coaster/{id}`
+![](https://md.ascii.coffee/uploads/7a7a843e-49b4-45ea-a158-afffa65564a0.png)
 
 ## `/users`
 
