@@ -6,11 +6,7 @@ from datetime import datetime
 
 from config import db
 
-
-def get(token_info, sort: str = None, limit: int = None, start: datetime = None, end: datetime = None):
-    if not token_info:
-        abort(401, "Not authorized")
-
+def get(sort: str = None, limit: int = None, start: datetime = None, end: datetime = None):
     match sort:
         case "id":
             key = Record.id
@@ -36,10 +32,7 @@ def get(token_info, sort: str = None, limit: int = None, start: datetime = None,
     return record_schema.dump(c)
 
 
-def aggregated(token_info):
-    if not token_info:
-        abort(401, "Not authorized")
-
+def aggregated():
     c = (
         db.session
         .query(Record.rollercoaster_id, func.count(Record.rollercoaster_id).label('count'))
