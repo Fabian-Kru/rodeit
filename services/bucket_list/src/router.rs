@@ -1,9 +1,3 @@
-use crate::model::{
-	coaster::{Coaster, CoasterAndBucketListCount},
-	country::Country,
-	manufacturer::Manufacturer,
-	park::Park,
-};
 use std::sync::Arc;
 
 use aide::{
@@ -20,8 +14,7 @@ use axum::{
 	routing::get,
 	Extension, Json, Router,
 };
-use captain_coaster::{client::Sendable, coaster_read_coaster::CoasterReadCoaster};
-use futures::future::join_all;
+use schemars::JsonSchema;
 use serde::{Deserialize, Serialize};
 use serde_with::skip_serializing_none;
 use surrealdb::opt::PatchOp;
@@ -31,7 +24,7 @@ use crate::AppState;
 #[skip_serializing_none]
 #[derive(Debug, Deserialize, Serialize)]
 struct BucketList {
-	coaster_ids: Vec<u32>,
+	coaster_ids: Vec<u64>,
 }
 
 pub fn create_router(state: Arc<AppState>) -> Router {
@@ -41,10 +34,7 @@ pub fn create_router(state: Arc<AppState>) -> Router {
 		.route("/docs", get(Scalar::new("/openapi.json").axum_handler()))
 		.api_route(
 			"/",
-			get_with(
-				get_coasters_and_bucket_list_counts,
-				docs_get_coasters_and_bucket_list_counts,
-			),
+			get_with(get_coasters_and_counts, docs_get_coasters_and_counts),
 		)
 		.api_route(
 			"/:user_id",
@@ -82,9 +72,16 @@ async fn get_openapi(Extension(api): Extension<Arc<OpenApi>>) -> Json<Arc<OpenAp
 	return Json(api);
 }
 
-async fn get_coasters_and_bucket_list_counts(
+#[skip_serializing_none]
+#[derive(Clone, Serialize, Deserialize, JsonSchema)]
+pub struct CoasterIdAndCount {
+	pub coaster_id: u64,
+	pub count: u32,
+}
+
+async fn get_coasters_and_counts(
 	State(state): State<Arc<AppState>>,
-) -> Result<Json<Vec<CoasterAndBucketListCount>>, StatusCode> {
+) -> Result<Json<Vec<CoasterIdAndCount>>, StatusCode> {
 	let store = &state.store;
 
 	let mut result = store
@@ -92,110 +89,27 @@ async fn get_coasters_and_bucket_list_counts(
 		.await
 		.or(Err(StatusCode::INTERNAL_SERVER_ERROR))?;
 
-	#[derive(Debug, Deserialize)]
-	struct CoasterIdAndBucketListCount {
-		coaster_id: u32,
-		count: u32,
-	}
-
-	let coaster_ids_and_bucket_list_counts = result
-		.take::<Vec<CoasterIdAndBucketListCount>>(0)
+	let coaster_ids_and_counts = result
+		.take::<Vec<CoasterIdAndCount>>(0)
 		.or(Err(StatusCode::INTERNAL_SERVER_ERROR))?;
 
-	let coasters_and_bucket_list_counts =
-		coaster_ids_and_bucket_list_counts
-			.iter()
-			.map(|coaster_with_count| async {
-				let raw_coaster = CoasterReadCoaster::get_coaster_item()
-					.id(coaster_with_count.coaster_id.to_string())
-					.send(&state.cc_client)
-					.await
-					.or(Err(StatusCode::INTERNAL_SERVER_ERROR))?;
-
-				return Ok(CoasterAndBucketListCount {
-					coaster: Coaster {
-						id: coaster_with_count.coaster_id,
-						name: raw_coaster.name.clone(),
-						speed: raw_coaster.speed.and_then(|speed| Some(speed as u32)),
-						height: raw_coaster.height.and_then(|height| Some(height as u32)),
-						length: raw_coaster.length.and_then(|length| Some(length as u32)),
-						inversions: raw_coaster
-							.inversions_number
-							.and_then(|inversions| Some(inversions as u32)),
-						manufacturer: raw_coaster.manufacturer.clone().and_then(|manufacturer| {
-							Some(Manufacturer {
-								name: manufacturer.name?,
-							})
-						}),
-						park: raw_coaster.park.clone().and_then(|park| {
-							Some(Park {
-								id: park.id,
-								name: park.name?,
-								country: park
-									.country
-									.and_then(|country| Country::from_id(country.name?.as_str())),
-							})
-						}),
-						image: raw_coaster.main_image.clone().and_then(|image| image.path),
-					},
-					bucket_list_count: coaster_with_count.count,
-				});
-			});
-
-	return Ok(Json(
-		join_all(coasters_and_bucket_list_counts)
-			.await
-			.into_iter()
-			.collect::<Result<Vec<CoasterAndBucketListCount>, StatusCode>>()?,
-	));
+	return Ok(Json(coaster_ids_and_counts));
 }
 
-fn docs_get_coasters_and_bucket_list_counts(operation: TransformOperation) -> TransformOperation {
+fn docs_get_coasters_and_counts(operation: TransformOperation) -> TransformOperation {
 	operation
 		.summary("Get Coasters and Bucket List Counts")
 		.description("Get all coasters and the amount of bucket lists they are in")
-		.response_with::<200, Json<Vec<CoasterAndBucketListCount>>, _>(|res| {
+		.response_with::<200, Json<Vec<CoasterIdAndCount>>, _>(|res| {
 			res.description("List of Coasters and Bucket List Counts")
 				.example(vec![
-					CoasterAndBucketListCount {
-						bucket_list_count: 12,
-						coaster: Coaster {
-							id: 2832,
-							name: "Zadra".to_string(),
-							speed: Some(121),
-							height: Some(63),
-							length: Some(1316),
-							inversions: Some(3),
-							manufacturer: Some(Manufacturer {
-								name: "Rocky Mountain Construction".to_string(),
-							}),
-							park: Some(Park {
-								id: 545,
-								name: "Energylandia".to_string(),
-								country: Some(Country::Poland),
-							}),
-							image: Some("9f68e5f6-f989-4f0d-a9f8-1330dad339e3.jpg".to_string()),
-						},
+					CoasterIdAndCount {
+						count: 12,
+						coaster_id: 2832,
 					},
-					CoasterAndBucketListCount {
-						bucket_list_count: 8,
-						coaster: Coaster {
-							id: 2827,
-							name: "Taiga".to_string(),
-							speed: Some(106),
-							height: Some(52),
-							length: Some(1104),
-							inversions: Some(4),
-							manufacturer: Some(Manufacturer {
-								name: "Intamin".to_string(),
-							}),
-							park: Some(Park {
-								id: 117,
-								name: "Linnanmäki".to_string(),
-								country: Some(Country::Finland),
-							}),
-							image: Some("9a6ed72f-34c7-4353-bcf5-49fbae03718b.jpeg".to_string()),
-						},
+					CoasterIdAndCount {
+						count: 8,
+						coaster_id: 2827,
 					},
 				])
 		})
@@ -205,7 +119,7 @@ fn docs_get_coasters_and_bucket_list_counts(operation: TransformOperation) -> Tr
 async fn get_coasters(
 	State(state): State<Arc<AppState>>,
 	Path(user_id): Path<u64>,
-) -> Result<Json<Vec<Coaster>>, StatusCode> {
+) -> Result<Json<Vec<u64>>, StatusCode> {
 	let store = &state.store;
 
 	let bucket_list: Option<BucketList> = store
@@ -215,90 +129,16 @@ async fn get_coasters(
 
 	let bucket_list = bucket_list.ok_or(StatusCode::NOT_FOUND)?;
 
-	let coasters = bucket_list.coaster_ids.iter().map(|coaster_id| async {
-		let raw_coaster = CoasterReadCoaster::get_coaster_item()
-			.id(coaster_id.to_string())
-			.send(&state.cc_client)
-			.await
-			.or(Err(StatusCode::INTERNAL_SERVER_ERROR))?;
-
-		return Ok(Coaster {
-			id: *coaster_id,
-			name: raw_coaster.name.clone(),
-			speed: raw_coaster.speed.and_then(|speed| Some(speed as u32)),
-			height: raw_coaster.height.and_then(|height| Some(height as u32)),
-			length: raw_coaster.length.and_then(|length| Some(length as u32)),
-			inversions: raw_coaster
-				.inversions_number
-				.and_then(|inversions| Some(inversions as u32)),
-			manufacturer: raw_coaster.manufacturer.clone().and_then(|manufacturer| {
-				Some(Manufacturer {
-					name: manufacturer.name?,
-				})
-			}),
-			park: raw_coaster.park.clone().and_then(|park| {
-				Some(Park {
-					id: park.id,
-					name: park.name?,
-					country: park
-						.country
-						.and_then(|country| Country::from_id(country.name?.as_str())),
-				})
-			}),
-			image: raw_coaster.main_image.clone().and_then(|image| image.path),
-		});
-	});
-
-	return Ok(Json(
-		join_all(coasters)
-			.await
-			.into_iter()
-			.collect::<Result<Vec<_>, StatusCode>>()?,
-	));
+	return Ok(Json(bucket_list.coaster_ids));
 }
 
 fn docs_get_coasters(operation: TransformOperation) -> TransformOperation {
 	operation
 		.summary("Get Coasters in a Bucket List")
 		.description("Get all coasters in a bucket list")
-		.response_with::<200, Json<Vec<Coaster>>, _>(|res| {
+		.response_with::<200, Json<Vec<u64>>, _>(|res| {
 			res.description("List of Coasters in Bucket List")
-				.example(vec![
-					Coaster {
-						id: 2832,
-						name: "Zadra".to_string(),
-						speed: Some(121),
-						height: Some(63),
-						length: Some(1316),
-						inversions: Some(3),
-						manufacturer: Some(Manufacturer {
-							name: "Rocky Mountain Construction".to_string(),
-						}),
-						park: Some(Park {
-							id: 545,
-							name: "Energylandia".to_string(),
-							country: Some(Country::Poland),
-						}),
-						image: Some("9f68e5f6-f989-4f0d-a9f8-1330dad339e3.jpg".to_string()),
-					},
-					Coaster {
-						id: 2827,
-						name: "Taiga".to_string(),
-						speed: Some(106),
-						height: Some(52),
-						length: Some(1104),
-						inversions: Some(4),
-						manufacturer: Some(Manufacturer {
-							name: "Intamin".to_string(),
-						}),
-						park: Some(Park {
-							id: 117,
-							name: "Linnanmäki".to_string(),
-							country: Some(Country::Finland),
-						}),
-						image: Some("9a6ed72f-34c7-4353-bcf5-49fbae03718b.jpeg".to_string()),
-					},
-				])
+				.example(vec![2832, 2827])
 		})
 		.response_with::<404, (), _>(|res| res.description("Bucket List not found"))
 }
@@ -306,7 +146,7 @@ fn docs_get_coasters(operation: TransformOperation) -> TransformOperation {
 async fn get_coaster(
 	State(state): State<Arc<AppState>>,
 	Path((user_id, index)): Path<(u64, usize)>,
-) -> Result<Json<Coaster>, StatusCode> {
+) -> Result<Json<u64>, (StatusCode, String)> {
 	let mut result = state.store
 		.query(
 			"SELECT VALUE array::at(coaster_ids, $index) FROM ONLY type::thing('bucket_list', $user_id);",
@@ -314,68 +154,22 @@ async fn get_coaster(
 		.bind(("index", index))
 		.bind(("user_id", user_id))
 		.await
-			.or(Err(StatusCode::INTERNAL_SERVER_ERROR))?;
+			.map_err(|err| (StatusCode::INTERNAL_SERVER_ERROR, err.to_string()))?;
 
 	let coaster_id = result
 		.take::<Option<u64>>(0)
-		.or(Err(StatusCode::INTERNAL_SERVER_ERROR))?
-		.ok_or(StatusCode::NOT_FOUND)?;
+		.map_err(|err| (StatusCode::INTERNAL_SERVER_ERROR, err.to_string()))?
+		.ok_or((StatusCode::NOT_FOUND, "not found".to_string()))?;
 
-	let raw_coaster = CoasterReadCoaster::get_coaster_item()
-		.id(coaster_id.to_string())
-		.send(&state.cc_client)
-		.await
-		.or(Err(StatusCode::INTERNAL_SERVER_ERROR))?;
-
-	return Ok(Json(Coaster {
-		id: coaster_id as u32,
-		name: raw_coaster.name.clone(),
-		speed: raw_coaster.speed.and_then(|speed| Some(speed as u32)),
-		height: raw_coaster.height.and_then(|height| Some(height as u32)),
-		length: raw_coaster.length.and_then(|length| Some(length as u32)),
-		inversions: raw_coaster
-			.inversions_number
-			.and_then(|inversions| Some(inversions as u32)),
-		manufacturer: raw_coaster.manufacturer.clone().and_then(|manufacturer| {
-			Some(Manufacturer {
-				name: manufacturer.name?,
-			})
-		}),
-		park: raw_coaster.park.clone().and_then(|park| {
-			Some(Park {
-				id: park.id,
-				name: park.name?,
-				country: park
-					.country
-					.and_then(|country| Country::from_id(country.name?.as_str())),
-			})
-		}),
-		image: raw_coaster.main_image.clone().and_then(|image| image.path),
-	}));
+	return Ok(Json(coaster_id));
 }
 
 fn docs_get_coaster(operation: TransformOperation) -> TransformOperation {
 	operation
 		.summary("Get a Coaster by index")
 		.description("Get a coaster at a given index in a bucket list")
-		.response_with::<200, Json<Coaster>, _>(|res| {
-			res.description("Coaster in Bucket List").example(Coaster {
-				id: 2827,
-				name: "Taiga".to_string(),
-				speed: Some(106),
-				height: Some(52),
-				length: Some(1104),
-				inversions: Some(4),
-				manufacturer: Some(Manufacturer {
-					name: "Intamin".to_string(),
-				}),
-				park: Some(Park {
-					id: 117,
-					name: "Linnanmäki".to_string(),
-					country: Some(Country::Finland),
-				}),
-				image: Some("9a6ed72f-34c7-4353-bcf5-49fbae03718b.jpeg".to_string()),
-			})
+		.response_with::<200, Json<u64>, _>(|res| {
+			res.description("Coaster in Bucket List").example(2827u32)
 		})
 		.response_with::<404, (), _>(|res| {
 			res.description("Bucket List not found or index out of bounds")
@@ -455,7 +249,7 @@ async fn set_coasters(
 	State(state): State<Arc<AppState>>,
 	Path(user_id): Path<u64>,
 	claims: Claims,
-	Json(coaster_ids): Json<Vec<u32>>,
+	Json(coaster_ids): Json<Vec<u64>>,
 ) -> Result<StatusCode, StatusCode> {
 	if claims.sub != user_id.to_string() {
 		return Err(StatusCode::UNAUTHORIZED);

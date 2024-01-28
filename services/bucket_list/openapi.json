@@ -2,7 +2,7 @@
 	"openapi": "3.1.0",
 	"info": {
 		"title": "Bucket List API",
-		"version": "0.1.0"
+		"version": "0.2.0"
 	},
 	"paths": {
 		"/": {
@@ -17,49 +17,17 @@
 								"schema": {
 									"type": "array",
 									"items": {
-										"$ref": "#/components/schemas/CoasterAndBucketListCount"
+										"$ref": "#/components/schemas/CoasterIdAndCount"
 									}
 								},
 								"example": [
 									{
-										"coaster": {
-											"id": 2832,
-											"name": "Zadra",
-											"speed": 121,
-											"height": 63,
-											"length": 1316,
-											"inversions": 3,
-											"manufacturer": {
-												"name": "Rocky Mountain Construction"
-											},
-											"park": {
-												"id": 545,
-												"name": "Energylandia",
-												"country": "Poland"
-											},
-											"image": "https://pictures.captaincoaster.com/1440x1440/9f68e5f6-f989-4f0d-a9f8-1330dad339e3.jpg"
-										},
-										"bucket_list_count": 12
+										"coaster_id": 2832,
+										"count": 12
 									},
 									{
-										"coaster": {
-											"id": 2827,
-											"name": "Taiga",
-											"speed": 106,
-											"height": 52,
-											"length": 1104,
-											"inversions": 4,
-											"manufacturer": {
-												"name": "Intamin"
-											},
-											"park": {
-												"id": 117,
-												"name": "Linnanmäki",
-												"country": "Finland"
-											},
-											"image": "https://pictures.captaincoaster.com/1440x1440/9a6ed72f-34c7-4353-bcf5-49fbae03718b.jpeg"
-										},
-										"bucket_list_count": 8
+										"coaster_id": 2827,
+										"count": 8
 									}
 								]
 							}
@@ -83,44 +51,14 @@
 								"schema": {
 									"type": "array",
 									"items": {
-										"$ref": "#/components/schemas/Coaster"
+										"type": "integer",
+										"format": "uint64",
+										"minimum": 0.0
 									}
 								},
 								"example": [
-									{
-										"id": 2832,
-										"name": "Zadra",
-										"speed": 121,
-										"height": 63,
-										"length": 1316,
-										"inversions": 3,
-										"manufacturer": {
-											"name": "Rocky Mountain Construction"
-										},
-										"park": {
-											"id": 545,
-											"name": "Energylandia",
-											"country": "Poland"
-										},
-										"image": "https://pictures.captaincoaster.com/1440x1440/9f68e5f6-f989-4f0d-a9f8-1330dad339e3.jpg"
-									},
-									{
-										"id": 2827,
-										"name": "Taiga",
-										"speed": 106,
-										"height": 52,
-										"length": 1104,
-										"inversions": 4,
-										"manufacturer": {
-											"name": "Intamin"
-										},
-										"park": {
-											"id": 117,
-											"name": "Linnanmäki",
-											"country": "Finland"
-										},
-										"image": "https://pictures.captaincoaster.com/1440x1440/9a6ed72f-34c7-4353-bcf5-49fbae03718b.jpeg"
-									}
+									2832,
+									2827
 								]
 							}
 						}
@@ -140,7 +78,7 @@
 								"type": "array",
 								"items": {
 									"type": "integer",
-									"format": "uint32",
+									"format": "uint64",
 									"minimum": 0.0
 								}
 							}
@@ -208,25 +146,11 @@
 						"content": {
 							"application/json": {
 								"schema": {
-									"$ref": "#/components/schemas/Coaster"
+									"type": "integer",
+									"format": "uint64",
+									"minimum": 0.0
 								},
-								"example": {
-									"id": 2827,
-									"name": "Taiga",
-									"speed": 106,
-									"height": 52,
-									"length": 1104,
-									"inversions": 4,
-									"manufacturer": {
-										"name": "Intamin"
-									},
-									"park": {
-										"id": 117,
-										"name": "Linnanmäki",
-										"country": "Finland"
-									},
-									"image": "https://pictures.captaincoaster.com/1440x1440/9a6ed72f-34c7-4353-bcf5-49fbae03718b.jpeg"
-								}
+								"example": 2827
 							}
 						}
 					},
@@ -298,188 +222,22 @@
 			}
 		},
 		"schemas": {
-			"Coaster": {
+			"CoasterIdAndCount": {
 				"type": "object",
 				"required": [
-					"id",
-					"name"
+					"coaster_id",
+					"count"
 				],
 				"properties": {
-					"height": {
-						"type": [
-							"integer",
-							"null"
-						],
-						"format": "uint32",
+					"coaster_id": {
+						"type": "integer",
+						"format": "uint64",
 						"minimum": 0.0
 					},
-					"id": {
+					"count": {
 						"type": "integer",
 						"format": "uint32",
 						"minimum": 0.0
-					},
-					"image": {
-						"type": [
-							"string",
-							"null"
-						]
-					},
-					"inversions": {
-						"type": [
-							"integer",
-							"null"
-						],
-						"format": "uint32",
-						"minimum": 0.0
-					},
-					"length": {
-						"type": [
-							"integer",
-							"null"
-						],
-						"format": "uint32",
-						"minimum": 0.0
-					},
-					"manufacturer": {
-						"anyOf": [
-							{
-								"$ref": "#/components/schemas/Manufacturer"
-							},
-							{
-								"type": "null"
-							}
-						]
-					},
-					"name": {
-						"type": "string"
-					},
-					"park": {
-						"anyOf": [
-							{
-								"$ref": "#/components/schemas/Park"
-							},
-							{
-								"type": "null"
-							}
-						]
-					},
-					"speed": {
-						"type": [
-							"integer",
-							"null"
-						],
-						"format": "uint32",
-						"minimum": 0.0
-					}
-				}
-			},
-			"CoasterAndBucketListCount": {
-				"type": "object",
-				"required": [
-					"bucket_list_count",
-					"coaster"
-				],
-				"properties": {
-					"bucket_list_count": {
-						"type": "integer",
-						"format": "uint32",
-						"minimum": 0.0
-					},
-					"coaster": {
-						"$ref": "#/components/schemas/Coaster"
-					}
-				}
-			},
-			"Country": {
-				"type": "string",
-				"enum": [
-					"Argentina",
-					"Australia",
-					"Austria",
-					"Belgium",
-					"Brazil",
-					"Burma",
-					"Canada",
-					"China",
-					"Colombia",
-					"Cyprus",
-					"CzechRepublic",
-					"Denmark",
-					"Finland",
-					"France",
-					"Germany",
-					"Guatemala",
-					"Hungary",
-					"India",
-					"Indonesia",
-					"Iraq",
-					"Ireland",
-					"Israel",
-					"Italy",
-					"Japan",
-					"Lebanon",
-					"Malaysia",
-					"Mexico",
-					"Mongolia",
-					"Netherlands",
-					"NewZealand",
-					"Norway",
-					"Peru",
-					"Poland",
-					"Portugal",
-					"Qatar",
-					"Russia",
-					"Singapore",
-					"SouthAfrica",
-					"SouthKorea",
-					"Spain",
-					"Sweden",
-					"Switzerland",
-					"Taiwan",
-					"Thailand",
-					"Turkey",
-					"Ukraine",
-					"UnitedArabEmirates",
-					"UnitedKingdom",
-					"UnitedStates",
-					"Vietnam"
-				]
-			},
-			"Manufacturer": {
-				"type": "object",
-				"required": [
-					"name"
-				],
-				"properties": {
-					"name": {
-						"type": "string"
-					}
-				}
-			},
-			"Park": {
-				"type": "object",
-				"required": [
-					"id",
-					"name"
-				],
-				"properties": {
-					"country": {
-						"anyOf": [
-							{
-								"$ref": "#/components/schemas/Country"
-							},
-							{
-								"type": "null"
-							}
-						]
-					},
-					"id": {
-						"type": "integer",
-						"format": "uint32",
-						"minimum": 0.0
-					},
-					"name": {
-						"type": "string"
 					}
 				}
 			}
