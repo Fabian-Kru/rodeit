@@ -1,5 +1,5 @@
 from flask import abort
-from sqlalchemy import and_, func
+from sqlalchemy import and_, func, text
 
 from models import Record, record_schema, record_count_schema
 from datetime import datetime
@@ -37,7 +37,7 @@ def aggregated():
         db.session
         .query(Record.rollercoaster_id, func.count(Record.rollercoaster_id).label('count'))
         .group_by(Record.rollercoaster_id)
-        .order_by('count DESC')
+        .order_by(text('count DESC'))
     )
 
     return record_count_schema.dump(c)
