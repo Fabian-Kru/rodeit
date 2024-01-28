@@ -213,6 +213,27 @@
 					}
 				}
 			},
+			"UpdateUser": {
+				"type": "object",
+				"properties": {
+					"name": {
+						"type": "string",
+						"nullable": true
+					},
+					"password": {
+						"type": "string",
+						"nullable": true
+					},
+					"surname": {
+						"type": "string",
+						"nullable": true
+					},
+					"username": {
+						"type": "string",
+						"nullable": true
+					}
+				}
+			},
 			"User": {
 				"type": "object",
 				"required": [
