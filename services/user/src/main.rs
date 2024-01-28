@@ -2,21 +2,19 @@ use std::env;
 use std::sync::Arc;
 
 use auth::Claims;
-use axum::{
-    http::StatusCode,
-    Json,
-    response::IntoResponse,
-    Router, routing::{delete, get, post},
-};
-use axum::body::Body;
 use axum::extract::{Path, State};
 use axum::routing::patch;
+use axum::{
+    http::StatusCode,
+    routing::{delete, get, post},
+    Json, Router,
+};
 
-use sqlx::{Error, Pool, Sqlite, SqlitePool};
 use sqlx::migrate::MigrateDatabase;
 use sqlx::sqlite::SqliteQueryResult;
-use utoipa::{Modify, OpenApi};
+use sqlx::{Error, Pool, Sqlite, SqlitePool};
 use utoipa::openapi::security::{HttpAuthScheme, HttpBuilder, SecurityScheme};
+use utoipa::{Modify, OpenApi};
 use utoipa_swagger_ui::SwaggerUi;
 
 use crate::models::*;
@@ -25,17 +23,17 @@ mod models;
 
 #[derive(OpenApi)]
 #[openapi(
-info(title = "User API", ),
-paths(
-get_all_users,
-register_user,
-login,
-delete_user,
-get_user_by_id,
-patch_user
-),
-components(schemas(User, LoginResponse, LoginRequest)),
-modifiers(& SecuritySchemes),
+    info(title = "User API", ),
+    paths(
+        get_all_users,
+        register_user,
+        login,
+        delete_user,
+        get_user_by_id,
+        patch_user
+    ),
+    components(schemas(User, LoginResponse, LoginRequest, UpdateUser)),
+    modifiers(& SecuritySchemes),
 )]
 struct ApiDoc;
 
@@ -65,7 +63,9 @@ async fn main() {
 
     match Sqlite::database_exists(&database_url).await.unwrap() {
         False => {
-            sqlx::Sqlite::create_database(&database_url).await.expect("unable to create database");
+            sqlx::Sqlite::create_database(&database_url)
+                .await
+                .expect("unable to create database");
         }
     }
 
@@ -93,12 +93,12 @@ async fn main() {
 
 /// Get all Users
 #[utoipa::path(
-get,
-path = "/getAllUsers",
-responses(
-(status = 200, body = [User], description = "operation successful"),
-(status = 500, description = "something went wrong")
-)
+    get,
+    path = "/getAllUsers",
+    responses(
+        (status = 200, body = [User], description = "operation successful"),
+        (status = 500, description = "something went wrong")
+    )
 )]
 async fn get_all_users(State(pool): State<Conn>) -> Json<Vec<User>> {
     let row = sqlx::query!("SELECT * FROM user")
@@ -127,23 +127,25 @@ async fn get_all_users(State(pool): State<Conn>) -> Json<Vec<User>> {
 ///
 /// Register a new user
 #[utoipa::path(
-post,
-path = "/register",
-responses(
-(status = 200, body = User, description = "operation successful"),
-(status = 400, description = "user already exists")
-)
-)]
-async fn register_user(State(pool): State<Conn>, Json(user): Json<User>) -> Result<StatusCode, StatusCode> {
-    let result = sqlx::query(
-        "INSERT INTO user (name, surname, username, password) values ($1,$2,$3,$4)",
+    post,
+    path = "/register",
+    responses(
+        (status = 200, body = User, description = "operation successful"),
+        (status = 400, description = "user already exists")
     )
-        .bind(&user.name)
-        .bind(&user.surname)
-        .bind(&user.username)
-        .bind(&user.password)
-        .execute(&(*pool))
-        .await;
+)]
+async fn register_user(
+    State(pool): State<Conn>,
+    Json(user): Json<User>,
+) -> Result<StatusCode, StatusCode> {
+    let result =
+        sqlx::query("INSERT INTO user (name, surname, username, password) values ($1,$2,$3,$4)")
+            .bind(&user.name)
+            .bind(&user.surname)
+            .bind(&user.username)
+            .bind(&user.password)
+            .execute(&(*pool))
+            .await;
 
     if result.is_ok() {
         return Ok(StatusCode::OK);
@@ -155,12 +157,12 @@ async fn register_user(State(pool): State<Conn>, Json(user): Json<User>) -> Resu
 ///
 /// Login with username and password and return JWT
 #[utoipa::path(
-post,
-path = "/login",
-responses(
-(status = 200, body = LoginResponse, description = "operation successful"),
-(status = 401, description = "user not found and/or password not valid")
-)
+    post,
+    path = "/login",
+    responses(
+        (status = 200, body = LoginResponse, description = "operation successful"),
+        (status = 401, description = "user not found and/or password not valid")
+    )
 )]
 async fn login(
     State(pool): State<Conn>,
@@ -175,8 +177,8 @@ async fn login(
         username,
         password
     )
-        .fetch_one(&(*pool))
-        .await;
+    .fetch_one(&(*pool))
+    .await;
 
     let Ok(row) = row else {
         return Err(StatusCode::UNAUTHORIZED);
@@ -190,14 +192,14 @@ async fn login(
 
 /// Delete a User by ID
 #[utoipa::path(
-delete,
-path = "/user/:user_id",
-security(("jwt" = [])),
-responses(
-(status = 200, description = "operation successful"),
-(status = 401, description = "not permitted to delete this user"),
-(status = 404, description = "user not found")
-)
+    delete,
+    path = "/user/:user_id",
+    security(("jwt" = [])),
+    responses(
+        (status = 200, description = "operation successful"),
+        (status = 401, description = "not permitted to delete this user"),
+        (status = 404, description = "user not found")
+    )
 )]
 async fn delete_user(
     State(pool): State<Conn>,
@@ -220,62 +222,87 @@ async fn delete_user(
 
 /// Update a User by ID
 #[utoipa::path(
-patch,
-path = "/user/:user_id",
-security(("jwt" = [])),
-responses(
-(status = 200, description = "operation successful"),
-(status = 401, description = "not permitted to change this user"),
-(status = 404, description = "user not found")
-)
+    patch,
+    path = "/user/:user_id",
+    security(("jwt" = [])),
+    responses(
+        (status = 200, description = "operation successful"),
+        (status = 401, description = "not permitted to change this user"),
+        (status = 404, description = "user not found")
+    )
 )]
 async fn patch_user(
     State(pool): State<Conn>,
     Path(user_id): Path<u32>,
     claims: Claims,
-    Json(user_update): Json<UpdateUser>
+    Json(user_update): Json<UpdateUser>,
 ) -> StatusCode {
-
     if claims.sub != user_id.to_string() {
         return StatusCode::UNAUTHORIZED;
     }
     let mut res: Option<Result<SqliteQueryResult, Error>> = None;
     if user_update.password != None {
-        res = Some(sqlx::query!("UPDATE user set password = $1 WHERE id = $2", user_update.password, user_id)
+        res = Some(
+            sqlx::query!(
+                "UPDATE user set password = $1 WHERE id = $2",
+                user_update.password,
+                user_id
+            )
             .execute(&(*pool))
-            .await);
+            .await,
+        );
     }
     if user_update.username != None {
-        res = Some(sqlx::query!("UPDATE user set username = $1 WHERE id = $2", user_update.username, user_id)
+        res = Some(
+            sqlx::query!(
+                "UPDATE user set username = $1 WHERE id = $2",
+                user_update.username,
+                user_id
+            )
             .execute(&(*pool))
-            .await);
+            .await,
+        );
     }
     if user_update.name != None {
-        res = Some(sqlx::query!("UPDATE user set name = $1 WHERE id = $2", user_update.name, user_id)
+        res = Some(
+            sqlx::query!(
+                "UPDATE user set name = $1 WHERE id = $2",
+                user_update.name,
+                user_id
+            )
             .execute(&(*pool))
-            .await);
+            .await,
+        );
     }
     if user_update.surname != None {
-        res = Some(sqlx::query!("UPDATE user set surname = $1 WHERE id = $2", user_update.surname, user_id)
+        res = Some(
+            sqlx::query!(
+                "UPDATE user set surname = $1 WHERE id = $2",
+                user_update.surname,
+                user_id
+            )
             .execute(&(*pool))
-            .await);
+            .await,
+        );
     }
 
     match res {
-
         Some(Ok(_)) => StatusCode::OK,
         Some(Err(_)) => StatusCode::NOT_FOUND,
-        None => StatusCode::NOT_FOUND
+        None => StatusCode::NOT_FOUND,
     }
 }
 
 /// Get a User by ID
 #[utoipa::path(get, path = "/user/:userid",
-responses(
-(status = 200, description = "operation successful"),
-(status = 404, description = "user not found"))
+    responses(
+        (status = 200, description = "operation successful"),
+        (status = 404, description = "user not found"))
 )]
-async fn get_user_by_id(State(pool): State<Conn>, Path(user_id): Path<u32>) -> Result<Json<User>, StatusCode> {
+async fn get_user_by_id(
+    State(pool): State<Conn>,
+    Path(user_id): Path<u32>,
+) -> Result<Json<User>, StatusCode> {
     let row = sqlx::query!("SELECT * FROM user WHERE id = $1", user_id)
         .fetch_one(&(*pool))
         .await;
@@ -290,5 +317,4 @@ async fn get_user_by_id(State(pool): State<Conn>, Path(user_id): Path<u32>) -> R
         surname: row.surname,
         password: row.password,
     }));
-
 }
