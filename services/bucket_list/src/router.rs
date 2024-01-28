@@ -38,10 +38,7 @@ pub fn create_router(state: Arc<AppState>) -> Router {
 	let mut api = OpenApi::default();
 	ApiRouter::new()
 		.route("/openapi.json", get(get_openapi))
-		.route(
-			"/docs",
-			get(Scalar::new("/openapi.json").axum_handler()),
-		)
+		.route("/docs", get(Scalar::new("/openapi.json").axum_handler()))
 		.api_route(
 			"/",
 			get_with(
