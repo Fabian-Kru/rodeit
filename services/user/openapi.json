@@ -39,7 +39,7 @@
 					"crate"
 				],
 				"summary": "Login",
-				"description": "Login\n\nLogin with username and password and receive a JWT",
+				"description": "Login\n\nLogin with username and password and return JWT",
 				"operationId": "login",
 				"requestBody": {
 					"description": "",
@@ -63,7 +63,7 @@
 							}
 						}
 					},
-					"400": {
+					"401": {
 						"description": "user not found and/or password not valid"
 					}
 				}
@@ -129,9 +129,7 @@
 						"jwt": []
 					}
 				]
-			}
-		},
-		"/user/:user_id/": {
+			},
 			"patch": {
 				"tags": [
 					"crate"
@@ -139,6 +137,17 @@
 				"summary": "Update a User by ID",
 				"description": "Update a User by ID",
 				"operationId": "patch_user",
+				"requestBody": {
+					"description": "",
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/UpdateUser"
+							}
+						}
+					},
+					"required": true
+				},
 				"responses": {
 					"200": {
 						"description": "operation successful"
@@ -207,7 +216,6 @@
 			"User": {
 				"type": "object",
 				"required": [
-					"id",
 					"name",
 					"surname",
 					"username",
@@ -216,7 +224,8 @@
 				"properties": {
 					"id": {
 						"type": "integer",
-						"format": "int64"
+						"format": "int64",
+						"nullable": true
 					},
 					"name": {
 						"type": "string"
