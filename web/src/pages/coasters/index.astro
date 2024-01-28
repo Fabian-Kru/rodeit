@@ -3,6 +3,7 @@ import { assignInlineVars } from '@vanilla-extract/dynamic';
 import { union, literal, Output, safeParse } from 'valibot';
 
 import { client, picturesBaseUrl } from 'src/api/mod.ts';
+import BaseLayout from 'src/components/layouts/base/index.astro';
 import { getUser } from 'src/session.ts';
 import { body_large, label_large, title_medium } from 'src/styles/atomic/fonts.css.ts';
 
@@ -35,7 +36,9 @@ const orderBy = orderByResult.output;
 let coastersAndMetas;
 switch (orderBy) {
 	case 'rating': // TODO: implement
-	case 'ridden': // TODO: implement
+	case 'ridden': {
+		break;
+	}
 	case 'wanted': {
 		const { data } = await client.GET('/bucket_list/');
 		if (data === undefined) {
@@ -45,80 +48,83 @@ switch (orderBy) {
 			});
 		}
 		coastersAndMetas = data;
+		break;
 	}
 }
 
 const user = getUser(Astro);
 ---
 
-<div class={page_style}>
-	<aside class={aside}>
-		<ul>
-			<li>
-				<a
-					class={aside_link}
-					href="?orderBy=rating"
-				>
-					<p class={label_large}>Best Rating</p>
-				</a>
-			</li>
-			<li>
-				<a
-					class={aside_link}
-					href="?orderBy=ridden"
-				>
-					<p class={label_large}>Most Ridden</p>
-				</a>
-			</li>
-			<li>
-				<a
-					class={aside_link}
-					href="?orderBy=wanted"
-				>
-					<p class={label_large}>Most Wanted</p>
-				</a>
-			</li>
-		</ul>
-	</aside>
-	<main class={main}>
-		<ol class={coasters}>
-			{
-				coastersAndMetas.map((coasterAndMeta) => {
-					return (
-						<li class={coaster}>
-							<div
-								class={coaster_details}
-								style={assignInlineVars({
-									[coaster_details_image]: `url(${picturesBaseUrl}${coasterAndMeta.coaster.image})`,
-								})}
-							>
-								<p class={`${coaster_details_meta} ${body_large}`}>
-									wanted by {coasterAndMeta.bucket_list_count} user
-									{coasterAndMeta.bucket_list_count != 1 ? 's' : ''}
-								</p>
-								<div class={coaster_details_park}>
-									{coasterAndMeta.coaster.park?.country && (
-										<img
-											height={12}
-											width={18}
-											alt={`${coasterAndMeta.coaster.park.country} flag`}
-											src={`http://purecatamphetamine.github.io/country-flag-icons/3x2/${coasterAndMeta.coaster.park.country}.svg`}
-										/>
-									)}
-									<p class={body_large}>{coasterAndMeta.coaster.park?.name}</p>
+<BaseLayout>
+	<div class={page_style}>
+		<aside class={aside}>
+			<ul>
+				<li>
+					<a
+						class={aside_link}
+						href="?orderBy=rating"
+					>
+						<p class={label_large}>Best Rating</p>
+					</a>
+				</li>
+				<li>
+					<a
+						class={aside_link}
+						href="?orderBy=ridden"
+					>
+						<p class={label_large}>Most Ridden</p>
+					</a>
+				</li>
+				<li>
+					<a
+						class={aside_link}
+						href="?orderBy=wanted"
+					>
+						<p class={label_large}>Most Wanted</p>
+					</a>
+				</li>
+			</ul>
+		</aside>
+		<main class={main}>
+			<ol class={coasters}>
+				{
+					coastersAndMetas.map((coasterAndMeta) => {
+						return (
+							<li class={coaster}>
+								<div
+									class={coaster_details}
+									style={assignInlineVars({
+										[coaster_details_image]: `url(${picturesBaseUrl}${coasterAndMeta.coaster.image})`,
+									})}
+								>
+									<p class={`${coaster_details_meta} ${body_large}`}>
+										wanted by {coasterAndMeta.bucket_list_count} user
+										{coasterAndMeta.bucket_list_count != 1 ? 's' : ''}
+									</p>
+									<div class={coaster_details_park}>
+										{coasterAndMeta.coaster.park?.country && (
+											<img
+												height={12}
+												width={18}
+												alt={`${coasterAndMeta.coaster.park.country} flag`}
+												src={`http://purecatamphetamine.github.io/country-flag-icons/3x2/${coasterAndMeta.coaster.park.country}.svg`}
+											/>
+										)}
+										<p class={body_large}>{coasterAndMeta.coaster.park?.name}</p>
+									</div>
+									<p class={title_medium}>{coasterAndMeta.coaster.name}</p>
 								</div>
-								<p class={title_medium}>{coasterAndMeta.coaster.name}</p>
-							</div>
-							{user && (
-								<ul class={coaster_actions}>
-									<li />
-									<li />
-								</ul>
-							)}
-						</li>
-					);
-				})
-			}
-		</ol>
-	</main>
-</div>
+								{user && (
+									<ul class={coaster_actions}>
+										<li />
+										<li />
+									</ul>
+								)}
+							</li>
+						);
+					})
+				}
+			</ol>
+		</main>
+	</div></BaseLayout
+>
