@@ -160,13 +160,6 @@ export interface paths {
       };
     };
   };
-  "/records/": {
-    /**
-     * TODO
-     * @description TODO
-     */
-    get: operations["record.main"];
-  };
   "/records/record": {
     /**
      * Submit a Record
@@ -307,17 +300,6 @@ export type external = Record<string, never>;
 
 export interface operations {
 
-  /**
-   * TODO
-   * @description TODO
-   */
-  "record.main": {
-    responses: {
-      200: {
-        content: never;
-      };
-    };
-  };
   /**
    * Submit a Record
    * @description Submit a new coaster to a user

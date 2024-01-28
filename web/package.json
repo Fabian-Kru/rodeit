@@ -11,7 +11,8 @@
 		"lint": "eslint --ext .js,.jsx,.ts,.tsx,.astro .",
 		"lint:fix": "eslint --fix --ext .js,.jsx,.ts,.tsx,.astro .",
 		"check": "astro check",
-		"gen:openapi": "openapi-typescript ../docs/dist/openapi.json -o src/api/types.ts"
+		"gen:rodeit": "openapi-typescript ../docs/dist/openapi.json -o src/api/rodeit_types.ts",
+		"gen:cc": "openapi-typescript https://captaincoaster.com/api/docs?format=json -o src/api/captain_coaster_types.ts"
 	},
 	"dependencies": {
 		"@astrojs/check": "^0.4.1",

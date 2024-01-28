@@ -4,14 +4,14 @@ import { btn, input_text, link } from 'src/styles/forms.css.ts';
 import { label_large } from 'src/styles/atomic/fonts.css.ts';
 
 import { actions, form, page } from './index.css.ts';
-import { FIELD_PASSWORD, FIELD_USERNAME } from './post.ts';
+import { FIELD_PASSWORD, FIELD_USERNAME } from './action.ts';
 ---
 
 <BaseLayout>
 	<div class={page}>
 		<form
 			class={form}
-			action="/login/post"
+			action="/login/action"
 			method="post"
 		>
 			<input

@@ -5,3 +5,6 @@ node_modules/
 .output
 .solid
 .vinxi
+
+src/api/captain_coaster_types.ts
+src/api/rodeit_types.ts

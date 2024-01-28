@@ -4,6 +4,7 @@
 // eslint-disable-next-line @typescript-eslint/consistent-type-definitions
 interface ImportMetaEnv {
 	readonly VITE_RODEIT_API_URL: string;
+	readonly VITE_CAPTAIN_COASTER_API_KEY: string;
 }
 
 // eslint-disable-next-line @typescript-eslint/consistent-type-definitions

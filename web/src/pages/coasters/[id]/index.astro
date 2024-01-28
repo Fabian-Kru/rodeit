@@ -1,0 +1,29 @@
+---
+import { captainCoaster } from 'src/api/mod.ts';
+import BaseLayout from 'src/components/layouts/base/index.astro';
+
+const coasterId = Number(Astro.params.id);
+
+if (isNaN(coasterId)) {
+	return new Response(null, {
+		status: 400,
+		statusText: 'coaster id must be a number',
+	});
+}
+
+const coaster = await captainCoaster.GET('/api/coasters/{id}', {
+	params: {
+		path: {
+			id: String(Math.trunc(coasterId)),
+		},
+	},
+});
+
+console.log(coaster);
+---
+
+<BaseLayout>
+	<div>
+		<h1>{coaster.data?.name}</h1>
+	</div>
+</BaseLayout>

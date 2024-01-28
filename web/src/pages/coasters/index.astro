@@ -1,9 +1,10 @@
 ---
 import { assignInlineVars } from '@vanilla-extract/dynamic';
-import { union, literal, Output, safeParse } from 'valibot';
+import { union, literal, safeParse, Output } from 'valibot';
 
-import { client, picturesBaseUrl } from 'src/api/mod.ts';
+import { rodeit, captainCoaster, picturesBaseUrl } from 'src/api/mod.ts';
 import BaseLayout from 'src/components/layouts/base/index.astro';
+import { getCountryFlagUrl, CountryName } from 'src/country_flags.ts';
 import { getUser } from 'src/session.ts';
 import { body_large, label_large, title_medium } from 'src/styles/atomic/fonts.css.ts';
 
@@ -21,9 +22,8 @@ import {
 	page as page_style,
 } from './index.css.ts';
 
-const OrderBySchema = union([literal('rating'), literal('ridden'), literal('wanted')]);
-
-// type OrderBy = Output<typeof OrderBySchema>;
+const OrderBySchema = union([literal('ridden'), literal('wanted')]);
+type OrderBy = Output<typeof OrderBySchema>;
 
 const orderByResult = safeParse(OrderBySchema, Astro.url.searchParams.get('orderBy'));
 
@@ -33,40 +33,77 @@ if (!orderByResult.success) {
 
 const orderBy = orderByResult.output;
 
-let coastersAndMetas;
+type Coaster = Awaited<ReturnType<typeof captainCoaster.GET<'/api/coasters/{id}'>>>;
+
+type CoasterAndCount = {
+	coaster: Coaster;
+	count: number;
+};
+
+let coastersAndCounts: CoasterAndCount[] = [];
 switch (orderBy) {
-	case 'rating': // TODO: implement
 	case 'ridden': {
-		break;
-	}
-	case 'wanted': {
-		const { data } = await client.GET('/bucket_list/');
-		if (data === undefined) {
+		const { data } = await rodeit.GET('/records/records/aggregate');
+		if (!data) {
 			return new Response(null, {
 				status: 500,
 				statusText: 'failed to load coasters',
 			});
 		}
-		coastersAndMetas = data;
+		coastersAndCounts = await Promise.all(
+			data.map(async (coasterIdAndCount) => ({
+				coaster: await captainCoaster.GET('/api/coasters/{id}', {
+					params: {
+						path: {
+							id: String(coasterIdAndCount.rollercoaster_id),
+						},
+					},
+				}),
+				count: coasterIdAndCount.count,
+			}))
+		);
+		break;
+	}
+	case 'wanted': {
+		const { data } = await rodeit.GET('/bucket_list/');
+		if (!data) {
+			return new Response(null, {
+				status: 500,
+				statusText: 'failed to load coasters',
+			});
+		}
+		coastersAndCounts = await Promise.all(
+			data.map(async (coasterIdAndCount) => ({
+				coaster: await captainCoaster.GET('/api/coasters/{id}', {
+					params: {
+						path: {
+							id: String(coasterIdAndCount.coaster_id),
+						},
+					},
+				}),
+				count: coasterIdAndCount.count,
+			}))
+		);
 		break;
 	}
 }
 
 const user = getUser(Astro);
+
+function localizeCount(count: number) {
+	switch (orderBy) {
+		case 'ridden':
+			return `Ridden ${count} time${count != 1 ? 's' : ''}`;
+		case 'wanted':
+			return `Wanted by ${count} user${count != 1 ? 's' : ''}`;
+	}
+}
 ---
 
 <BaseLayout>
 	<div class={page_style}>
 		<aside class={aside}>
 			<ul>
-				<li>
-					<a
-						class={aside_link}
-						href="?orderBy=rating"
-					>
-						<p class={label_large}>Best Rating</p>
-					</a>
-				</li>
 				<li>
 					<a
 						class={aside_link}
@@ -88,31 +125,32 @@ const user = getUser(Astro);
 		<main class={main}>
 			<ol class={coasters}>
 				{
-					coastersAndMetas.map((coasterAndMeta) => {
+					coastersAndCounts.map((coasterAndCount) => {
 						return (
 							<li class={coaster}>
 								<div
 									class={coaster_details}
 									style={assignInlineVars({
-										[coaster_details_image]: `url(${picturesBaseUrl}${coasterAndMeta.coaster.image})`,
+										[coaster_details_image]: `url(${picturesBaseUrl}${coasterAndCount.coaster.data?.mainImage?.path})`,
 									})}
 								>
 									<p class={`${coaster_details_meta} ${body_large}`}>
-										wanted by {coasterAndMeta.bucket_list_count} user
-										{coasterAndMeta.bucket_list_count != 1 ? 's' : ''}
+										{localizeCount(coasterAndCount.count)}
 									</p>
 									<div class={coaster_details_park}>
-										{coasterAndMeta.coaster.park?.country && (
+										{coasterAndCount.coaster.data?.park?.country?.name && (
 											<img
 												height={12}
 												width={18}
-												alt={`${coasterAndMeta.coaster.park.country} flag`}
-												src={`http://purecatamphetamine.github.io/country-flag-icons/3x2/${coasterAndMeta.coaster.park.country}.svg`}
+												alt={`${coasterAndCount.coaster.data.park.country.name} flag`}
+												src={getCountryFlagUrl(
+													coasterAndCount.coaster.data.park.country.name.slice(8) as CountryName
+												)}
 											/>
 										)}
-										<p class={body_large}>{coasterAndMeta.coaster.park?.name}</p>
+										<p class={body_large}>{coasterAndCount.coaster.data?.park?.name}</p>
 									</div>
-									<p class={title_medium}>{coasterAndMeta.coaster.name}</p>
+									<p class={title_medium}>{coasterAndCount.coaster.data?.name}</p>
 								</div>
 								{user && (
 									<ul class={coaster_actions}>

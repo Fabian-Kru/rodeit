@@ -1,6 +1,6 @@
 import { APIContext } from 'astro';
 
-import { client } from 'src/api/mod.ts';
+import { rodeit } from 'src/api/mod.ts';
 
 export const FIELD_USERNAME = 'username';
 export const FIELD_PASSWORD = 'password';
@@ -21,7 +21,7 @@ export async function POST({ request, cookies, redirect }: APIContext) {
 			statusText: 'password is required',
 		});
 	}
-	const { data } = await client.POST('/users/login', {
+	const { data } = await rodeit.POST('/users/login', {
 		body: {
 			username: username.toString(),
 			password: password.toString(),
