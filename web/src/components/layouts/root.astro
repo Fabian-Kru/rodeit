@@ -27,20 +27,20 @@ const user = getUser(Astro.cookies);
 					<ul class={nav_pages}>
 						<li class={nav_link_container}>
 							<a
+								href="/"
+								class={link}
+								aria-current={ariaCurrent(Astro, new RegExp('^/$'))}
+							>
+								<p class={label_large}>Home</p>
+							</a>
+						</li>
+						<li class={nav_link_container}>
+							<a
 								href="/coasters"
 								class={link}
 								aria-current={ariaCurrent(Astro, new RegExp('^/coasters'))}
 							>
 								<p class={label_large}>Coasters</p>
-							</a>
-						</li>
-						<li class={nav_link_container}>
-							<a
-								href="/users"
-								class={link}
-								aria-current={ariaCurrent(Astro, new RegExp('^/users'))}
-							>
-								<p class={label_large}>Users</p>
 							</a>
 						</li>
 					</ul>

@@ -162,7 +162,12 @@ const bucketList: (Coaster & { index: number })[] | undefined =
 				))}
 			</ol>
 		) : (
-			<p class={body_large}>the bucket list is empty</p>
+			<>
+				<p class={body_large}>No Coasters on the Bucket List yet.</p>
+				<p class={body_large}>
+					Create your first Bucket List by clicking the plus button on any coaster.
+				</p>
+			</>
 		)
 	}
 </ProfileLayout>

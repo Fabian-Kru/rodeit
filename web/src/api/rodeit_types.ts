@@ -224,7 +224,12 @@ export interface paths {
      */
     post: operations["register_user"];
   };
-  "/users/user/:user_id": {
+  "/users/user/{user_id}": {
+    /**
+     * Get a User by ID
+     * @description Get a User by ID
+     */
+    get: operations["get_user_by_id"];
     /**
      * Delete a User by ID
      * @description Delete a User by ID
@@ -235,13 +240,6 @@ export interface paths {
      * @description Update a User by ID
      */
     patch: operations["patch_user"];
-  };
-  "/users/user/:userid": {
-    /**
-     * Get a User by ID
-     * @description Get a User by ID
-     */
-    get: operations["get_user_by_id"];
   };
 }
 
@@ -265,6 +263,12 @@ export interface components {
     };
     LoginResponse: {
       token: string;
+    };
+    UpdateUser: {
+      name?: string | null;
+      password?: string | null;
+      surname?: string | null;
+      username?: string | null;
     };
     User: {
       /** Format: int64 */
@@ -314,6 +318,10 @@ export interface operations {
       };
       /** @description Access token is missing or invalid */
       401: {
+        content: never;
+      };
+      /** @description User not allowed to edit other users */
+      403: {
         content: never;
       };
     };
@@ -494,10 +502,36 @@ export interface operations {
     };
   };
   /**
+   * Get a User by ID
+   * @description Get a User by ID
+   */
+  get_user_by_id: {
+    parameters: {
+      path: {
+        user_id: number;
+      };
+    };
+    responses: {
+      /** @description operation successful */
+      200: {
+        content: never;
+      };
+      /** @description user not found */
+      404: {
+        content: never;
+      };
+    };
+  };
+  /**
    * Delete a User by ID
    * @description Delete a User by ID
    */
   delete_user: {
+    parameters: {
+      path: {
+        user_id: number;
+      };
+    };
     responses: {
       /** @description operation successful */
       200: {
@@ -518,6 +552,11 @@ export interface operations {
    * @description Update a User by ID
    */
   patch_user: {
+    parameters: {
+      path: {
+        user_id: number;
+      };
+    };
     requestBody: {
       content: {
         "application/json": components["schemas"]["UpdateUser"];
@@ -530,22 +569,6 @@ export interface operations {
       };
       /** @description not permitted to change this user */
       401: {
-        content: never;
-      };
-      /** @description user not found */
-      404: {
-        content: never;
-      };
-    };
-  };
-  /**
-   * Get a User by ID
-   * @description Get a User by ID
-   */
-  get_user_by_id: {
-    responses: {
-      /** @description operation successful */
-      200: {
         content: never;
       };
       /** @description user not found */

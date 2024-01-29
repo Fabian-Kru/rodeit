@@ -7,6 +7,7 @@ import { actions, alert, form, page } from './index.css.ts';
 import { FIELD_PASSWORD, FIELD_USERNAME } from './action.ts';
 
 const registered = Astro.url.searchParams.has('registered');
+const invalid = Astro.url.searchParams.has('invalid');
 ---
 
 <RootLayout>
@@ -16,6 +17,7 @@ const registered = Astro.url.searchParams.has('registered');
 				<p class:list={[body_large, alert]}>Registered successfully! You can now sign in.</p>
 			)
 		}
+		{invalid && <p class:list={[body_large, alert]}>Invalid Credentials</p>}
 		<form
 			class={form}
 			action="/login/action"

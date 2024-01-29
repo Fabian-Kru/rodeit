@@ -28,10 +28,7 @@ export async function POST({ request, cookies, redirect }: APIContext) {
 		},
 	});
 	if (data === undefined) {
-		return new Response(null, {
-			status: 400,
-			statusText: 'invalid credentials',
-		});
+		return redirect('/login?invalid');
 	}
 	cookies.set('token', data.token, {
 		path: '/',

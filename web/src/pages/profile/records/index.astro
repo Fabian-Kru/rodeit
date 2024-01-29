@@ -75,7 +75,7 @@ if (records) {
 <ProfileLayout>
 	<h1 class={display_medium}>My Records</h1>
 	{
-		records ? (
+		records && records.length > 0 ? (
 			<ol class={coasters}>
 				{records.map((record) => (
 					<li class={coaster_style}>
@@ -87,7 +87,12 @@ if (records) {
 				))}
 			</ol>
 		) : (
-			<p class={body_large}>No records found.</p>
+			<>
+				<p class={body_large}>No Records yet.</p>
+				<p class={body_large}>
+					Create your first Record by clicking the checkmark button on any coaster.
+				</p>
+			</>
 		)
 	}
 </ProfileLayout>
