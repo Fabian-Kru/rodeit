@@ -26,7 +26,7 @@ const { data } = await rodeit.GET('/bucket_list/{user_id}', {
 	headers: headers(Astro.cookies),
 });
 
-const bucketList: (Coaster & { index: number })[] | undefined =
+const bucketList: Array<Coaster & { index: number }> | undefined =
 	data &&
 	(
 		await Promise.all(
@@ -162,12 +162,7 @@ const bucketList: (Coaster & { index: number })[] | undefined =
 				))}
 			</ol>
 		) : (
-			<>
-				<p class={body_large}>No Coasters on the Bucket List yet.</p>
-				<p class={body_large}>
-					Create your first Bucket List by clicking the plus button on any coaster.
-				</p>
-			</>
+			<p class={body_large}>No Coasters on the Bucket List yet.</p>
 		)
 	}
 </ProfileLayout>

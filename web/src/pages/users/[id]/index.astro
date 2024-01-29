@@ -1,0 +1,128 @@
+---
+import RootLayout from 'src/components/layouts/root.astro';
+
+import { captainCoaster, rodeit } from 'src/api/mod.ts';
+import CoasterComponent from 'src/components/coaster.astro';
+import { Coaster, Record } from 'src/model.ts';
+import { display_medium, title_medium } from 'src/styles/atomic/fonts.css.ts';
+
+import { page, header, columns, column, coasters as coasters_style } from './index.css.ts';
+
+type User = {
+	username: string;
+	name: string;
+	surname: string;
+};
+
+const userId = Number(Astro.params.id);
+
+if (isNaN(userId)) {
+	// TODO: Redirect to 404 page
+	return Astro.redirect('/');
+}
+
+const userResult = await rodeit.GET('/users/user/{user_id}', {
+	params: {
+		path: {
+			user_id: userId,
+		},
+	},
+});
+
+if (!userResult.response.ok) {
+	// TODO: Redirect to 404 page
+	return Astro.redirect('/');
+}
+
+const user = userResult.data as User;
+
+const recordsResult = await rodeit.GET('/records/user/{user_id}', {
+	params: {
+		path: {
+			user_id: userId,
+		},
+	},
+});
+const recordsData = recordsResult.data as Record[];
+const records = recordsData.map((record) => ({
+	...record,
+	timestamp: new Date(record.timestamp),
+}));
+
+// TODO: this should be done on the server
+records.sort((a, b) => b.timestamp.getTime() - a.timestamp.getTime());
+
+const { data: bucketList } = await rodeit.GET('/bucket_list/{user_id}', {
+	params: {
+		path: {
+			user_id: userId,
+		},
+	},
+});
+
+const uniqueCoasterIds = new Set<number>([
+	...records.map((record) => record.rollercoaster_id),
+	...bucketList!,
+]);
+
+const coasters = new Map<number, Coaster>();
+await Promise.all(
+	[...uniqueCoasterIds].map(async (coasterId) => {
+		const { data: coaster } = await captainCoaster.GET('/api/coasters/{id}', {
+			params: {
+				path: {
+					id: String(coasterId),
+				},
+			},
+		});
+		if (!coaster) return undefined;
+		coasters.set(coasterId, {
+			id: coasterId,
+			name: coaster.name,
+			park: coaster.park && {
+				name: coaster.park.name,
+				country: coaster.park.country?.name,
+			},
+			image: coaster.mainImage?.path,
+		});
+	})
+);
+---
+
+<RootLayout>
+	<div class={page}>
+		<header class={header}>
+			<p class={title_medium}>{user.username}</p>
+			<h1 class={display_medium}>{user.name} {user.surname}</h1>
+		</header>
+		<div class={columns}>
+			<div class={column}>
+				<h2 class={title_medium}>Bucket List</h2>
+				<ul class={coasters_style}>
+					{
+						bucketList!.map((coasterId) => (
+							<li>
+								<CoasterComponent coaster={coasters.get(coasterId)!} />
+							</li>
+						))
+					}
+				</ul>
+			</div>
+			<div class={column}>
+				<h2 class={title_medium}>Records</h2>
+				<ul class={coasters_style}>
+					{
+						records.map((record) => (
+							<li>
+								<CoasterComponent
+									coaster={coasters.get(record.rollercoaster_id)!}
+									riddenOn={new Date(record.timestamp)}
+								/>
+							</li>
+						))
+					}
+				</ul>
+			</div>
+		</div>
+	</div>
+</RootLayout>
