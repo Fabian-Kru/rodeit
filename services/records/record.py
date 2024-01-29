@@ -19,7 +19,7 @@ def get_by_id(record_id: int):
 
 
 def get_by_user(user_id: int):
-    res = Record.query.filter(Record.user_id == user_id).one_or_none()
+    res = Record.query.filter(Record.user_id == user_id).all()
     if res is not None:
         return record_schema.dump(res)
     else:
@@ -27,7 +27,7 @@ def get_by_user(user_id: int):
 
 
 def get_by_rollercoaster(rollercoaster_id: int):
-    res = Record.query.filter(Record.rollercoaster_id == rollercoaster_id).one_or_none()
+    res = Record.query.filter(Record.rollercoaster_id == rollercoaster_id).all()
     if res is not None:
         return record_schema.dump(res)
     else:
@@ -40,7 +40,14 @@ def submit(body: dict, token_info):
     if not token_info:
         abort(401, "Not authorized")
 
-    user_id = body.get("user_id")
+    if 'sub' not in token_info:
+        abort(401, "Not authorized")
+
+    user_id = str(body.get("user_id"))
+
+    if str(token_info['sub']) != user_id:
+        abort(403, "Forbidden")
+
     rollercoaster_id = body.get("rollercoaster_id")
     new_entry = {
         "user_id": str(user_id),

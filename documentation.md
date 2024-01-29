@@ -44,6 +44,11 @@
 ## Hinweise für Installation
 **Docker muss bereits installiert sein!**
 
+`Starten auf der VM:`
+1. cd /opt/gruppe1/
+2. sudo su
+3. docker compose down && docker compose up
+
 `Linux, Mac:`
 1. Im Hauptverzeichnis **"./setup.sh"** ausführen
 2. **"docker compose up"** ausführen
@@ -51,6 +56,12 @@
 `Windows:`
 1. Alle Docker Images bauen
 2. **"docker compose up"** ausführen
+
+`Zum pushen in die Registry`
+docker push gcr.hrz.tu-chemnitz.de/praktikum-scc/ws23-gruppe1/gruppe1/bucket_list:0.2.0
+docker push gcr.hrz.tu-chemnitz.de/praktikum-scc/ws23-gruppe1/gruppe1/user:0.1.0
+docker push gcr.hrz.tu-chemnitz.de/praktikum-scc/ws23-gruppe1/gruppe1/records:v1.f.a.5
+
 
 ## Plattformen
 - GitLab
@@ -102,23 +113,37 @@
 
 
 ## `/signup`
+Registrierung von Nutzern (Benutzername, Vorname, Nachname, Passwort)
+
+![](https://md.ascii.coffee/uploads/f3b5caf3-46f7-4938-9524-9ee1f5412fec.png)
 
 
 ## `/login` 
+Login durch Benutzernamen und Passwort
+
 ![](https://md.ascii.coffee/uploads/87d4d68e-5a2c-4f52-a702-90c6cca090b2.png)
 
 ## `/logout` 
 Loggt den Nutzer aus und leitet auf `/` weiter.
 
 ## `/coaster`
-![](https://md.ascii.coffee/uploads/23908e18-40ec-4609-826f-3c0473596f69.png)
+Zeigt alle bekannten Coaster an. Sortierbar nach: Meiste Fahrten, Beliebtheit
+
+![](https://md.ascii.coffee/uploads/093e5c98-bb24-4d46-adb4-bd812cd3a27e.png)
 
 
 ## `/coaster/{id}`
+![](https://md.ascii.coffee/uploads/7a7a843e-49b4-45ea-a158-afffa65564a0.png)
 
 ## `/users`
 
 ## `/users/{id}`
+
+
+## `/profile/bucket_list`
+Zeigt die eigene Bucketlist, sortiert nach persönlicher Reihenfolge
+
+![](https://md.ascii.coffee/uploads/4628bf4d-89a6-479a-b657-26edb71ba4d6.png)
 
 
 ## Feedback
