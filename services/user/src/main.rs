@@ -193,7 +193,7 @@ async fn login(
 /// Delete a User by ID
 #[utoipa::path(
     delete,
-    path = "/user/:user_id",
+    path = "/user/{user_id}",
     security(("jwt" = [])),
     responses(
         (status = 200, description = "operation successful"),
@@ -223,7 +223,7 @@ async fn delete_user(
 /// Update a User by ID
 #[utoipa::path(
     patch,
-    path = "/user/:user_id",
+    path = "/user/{user_id}",
     security(("jwt" = [])),
     responses(
         (status = 200, description = "operation successful"),
@@ -294,7 +294,7 @@ async fn patch_user(
 }
 
 /// Get a User by ID
-#[utoipa::path(get, path = "/user/:userid",
+#[utoipa::path(get, path = "/user/{user_id}",
     responses(
         (status = 200, description = "operation successful"),
         (status = 404, description = "user not found"))
