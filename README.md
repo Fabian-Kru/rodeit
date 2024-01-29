@@ -153,4 +153,6 @@ docker push gcr.hrz.tu-chemnitz.de/praktikum-scc/ws23-gruppe1/gruppe1/web:VERSIO
 
 ### Brainstorming
 
+> Der `rating` Service wurde aus Zeitgründen gestrichen
+
 ![](_images/brainstorming.svg)
