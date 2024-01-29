@@ -50,7 +50,7 @@ export const display_large_rule = geist([
 
 export const display_medium_rule = geist([
 	{
-		fontWeight: 200,
+		fontWeight: 250,
 		letterSpacing: -0.5,
 		fontOptions: {
 			capHeight: 26,
