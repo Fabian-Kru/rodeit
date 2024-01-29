@@ -3,7 +3,7 @@ import { APIContext } from 'astro';
 import { rodeit } from 'src/api/mod.ts';
 import { getUser, headers } from 'src/session.ts';
 
-export async function POST({ params, cookies, redirect }: APIContext) {
+export async function POST({ cookies, redirect }: APIContext) {
 	const user = getUser(cookies);
 	if (!user) {
 		return redirect('/login');
