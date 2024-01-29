@@ -1,23 +1,18 @@
 ---
-import { assignInlineVars } from '@vanilla-extract/dynamic';
 import { union, literal, safeParse, Output } from 'valibot';
 
-import { rodeit, captainCoaster, picturesBaseUrl } from 'src/api/mod.ts';
+import { rodeit, captainCoaster } from 'src/api/mod.ts';
 import BaseLayout from 'src/components/layouts/base/index.astro';
-import { getCountryFlagUrl, CountryName } from 'src/country_flags.ts';
 import { getUser } from 'src/session.ts';
-import { body_large, label_large, title_medium } from 'src/styles/atomic/fonts.css.ts';
+import { label_large } from 'src/styles/atomic/fonts.css.ts';
+import { Coaster } from 'src/model.ts';
+import CoasterComponent from 'src/components/coaster.astro';
 
 import {
 	aside,
 	aside_form,
 	aside_link,
-	coaster as coaster_style,
 	coaster_actions,
-	coaster_details,
-	coaster_details_image,
-	coaster_details_meta,
-	coaster_details_park,
 	coasters as coasters_style,
 	main,
 	page as page_style,
@@ -38,17 +33,6 @@ if (!orderByResult.success) {
 
 const search = Astro.url.searchParams.get(FIELD_SEARCH);
 const orderBy = orderByResult.output;
-
-type Coaster = {
-	id: number;
-	count?: number;
-	name?: string;
-	image?: string;
-	park?: {
-		name?: string;
-		country?: string;
-	};
-};
 
 let coasters: Coaster[] = [];
 
@@ -76,11 +60,15 @@ if (search) {
 				},
 			});
 			const image = data?.mainImage?.path;
+			const country = data?.park?.country?.name;
 
 			const _coaster: Coaster = {
 				id: coaster.id as number,
 				name: coaster.name,
-				park: coaster.park,
+				park: coaster.park && {
+					name: coaster.park.name,
+					country,
+				},
 				image,
 			};
 			return _coaster;
@@ -155,16 +143,7 @@ if (search) {
 	}
 }
 
-const user = getUser(Astro);
-
-function localizeCount(count: number) {
-	switch (orderBy) {
-		case 'ridden':
-			return `Ridden ${count} time${count != 1 ? 's' : ''}`;
-		case 'wanted':
-			return `Wanted by ${count} user${count != 1 ? 's' : ''}`;
-	}
-}
+const user = getUser(Astro.cookies);
 ---
 
 <BaseLayout>
@@ -216,34 +195,11 @@ function localizeCount(count: number) {
 				{
 					coasters.map((coaster) => {
 						return (
-							<li class={coaster_style}>
-								<a
-									href={`/coasters/${coaster.id}`}
-									class={coaster_details}
-									style={assignInlineVars({
-										[coaster_details_image]: `url(${picturesBaseUrl}${coaster.image})`,
-									})}
-								>
-									{coaster.count ? (
-										<p class={`${coaster_details_meta} ${body_large}`}>
-											{localizeCount(coaster.count)}
-										</p>
-									) : (
-										<div />
-									)}
-									<div class={coaster_details_park}>
-										{coaster.park?.country && (
-											<img
-												height={12}
-												width={18}
-												alt={`${coaster.park.country} flag`}
-												src={getCountryFlagUrl(coaster.park.country.slice(8) as CountryName)}
-											/>
-										)}
-										<p class={body_large}>{coaster.park?.name}</p>
-									</div>
-									<p class={title_medium}>{coaster.name}</p>
-								</a>
+							<li>
+								<CoasterComponent
+									coaster={coaster}
+									countType={orderBy}
+								/>
 								{user && (
 									<ul class={coaster_actions}>
 										<li />

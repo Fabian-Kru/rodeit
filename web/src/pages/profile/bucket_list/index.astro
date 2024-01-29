@@ -1,8 +1,168 @@
 ---
+import { rodeit, captainCoaster } from 'src/api/mod.ts';
+import CoasterComponent from 'src/components/coaster.astro';
 import ProfileLayout from 'src/components/layouts/profile/index.astro';
-import { display_medium } from 'src/styles/atomic/fonts.css.ts';
+import { Coaster } from 'src/model.ts';
+import { getUser, headers } from 'src/session.ts';
+import { body_large, display_medium } from 'src/styles/atomic/fonts.css.ts';
+import { FIELD_COASTER_IDS } from 'src/pages/profile/bucket_list/[index]/up.ts';
+
+import { coaster as coaster_style, coasters, coaster_actions } from './index.css.ts';
+import { btn } from 'src/styles/forms.css';
+
+const user = getUser(Astro.cookies);
+
+if (!user) {
+	return Astro.redirect('/login');
+}
+
+const userId = Number(user.sub);
+const { data } = await rodeit.GET('/bucket_list/{user_id}', {
+	params: {
+		path: {
+			user_id: userId,
+		},
+	},
+	headers: headers(Astro.cookies),
+});
+
+const bucketList: (Coaster & { index: number })[] | undefined =
+	data &&
+	(
+		await Promise.all(
+			data.map(async (coasterId, i) => {
+				const { data: coaster } = await captainCoaster.GET('/api/coasters/{id}', {
+					params: {
+						path: {
+							id: String(coasterId),
+						},
+					},
+				});
+
+				const _coaster: (Coaster & { index: number }) | undefined = coaster && {
+					index: i,
+					id: coasterId,
+					name: coaster.name,
+					park: coaster.park && {
+						name: coaster.park.name,
+						country: coaster.park.country?.name,
+					},
+					image: coaster.mainImage?.path,
+				};
+				return _coaster;
+			})
+		)
+	).filter((coaster) => {
+		return coaster !== undefined;
+	});
 ---
 
 <ProfileLayout>
 	<h1 class={display_medium}>My Bucket List</h1>
+	{
+		bucketList ? (
+			<ol class={coasters}>
+				{bucketList.map((coaster) => (
+					<li class={coaster_style}>
+						<CoasterComponent coaster={coaster} />
+						<form
+							method="POST"
+							class={coaster_actions}
+						>
+							<input
+								type="hidden"
+								name={FIELD_COASTER_IDS}
+								value={JSON.stringify(bucketList.map((coaster) => coaster.id))}
+							/>
+							{coaster.index !== 0 && (
+								<button
+									type="submit"
+									formaction={`/profile/bucket_list/${coaster.index}/up`}
+									style={{ padding: 0 }}
+									class={btn}
+								>
+									<svg
+										xmlns="http://www.w3.org/2000/svg"
+										class="icon icon-tabler icon-tabler-arrow-big-up"
+										width="24"
+										height="24"
+										viewBox="0 0 24 24"
+										stroke-width="2"
+										fill="none"
+										stroke-linecap="round"
+										stroke-linejoin="round"
+									>
+										<path
+											stroke="none"
+											d="M0 0h24v24H0z"
+											fill="none"
+										/>
+										<path d="M9 20v-8h-3.586a1 1 0 0 1 -.707 -1.707l6.586 -6.586a1 1 0 0 1 1.414 0l6.586 6.586a1 1 0 0 1 -.707 1.707h-3.586v8a1 1 0 0 1 -1 1h-4a1 1 0 0 1 -1 -1z" />
+									</svg>
+								</button>
+							)}
+							<button
+								type="submit"
+								formaction={`/profile/bucket_list/${coaster.index}/delete`}
+								style={{ padding: 0 }}
+								class={btn}
+							>
+								<svg
+									xmlns="http://www.w3.org/2000/svg"
+									class="icon icon-tabler icon-tabler-trash"
+									width="24"
+									height="24"
+									viewBox="0 0 24 24"
+									stroke-width="2"
+									fill="none"
+									stroke-linecap="round"
+									stroke-linejoin="round"
+								>
+									<path
+										stroke="none"
+										d="M0 0h24v24H0z"
+										fill="none"
+									/>
+									<path d="M4 7l16 0" />
+									<path d="M10 11l0 6" />
+									<path d="M14 11l0 6" />
+									<path d="M5 7l1 12a2 2 0 0 0 2 2h8a2 2 0 0 0 2 -2l1 -12" />
+									<path d="M9 7v-3a1 1 0 0 1 1 -1h4a1 1 0 0 1 1 1v3" />
+								</svg>
+							</button>
+							{coaster.index !== bucketList.length - 1 && (
+								<button
+									type="submit"
+									formaction={`/profile/bucket_list/${coaster.index}/down`}
+									style={{ padding: 0 }}
+									class={btn}
+								>
+									<svg
+										xmlns="http://www.w3.org/2000/svg"
+										class="icon icon-tabler icon-tabler-arrow-big-down"
+										width="24"
+										height="24"
+										viewBox="0 0 24 24"
+										stroke-width="2"
+										fill="none"
+										stroke-linecap="round"
+										stroke-linejoin="round"
+									>
+										<path
+											stroke="none"
+											d="M0 0h24v24H0z"
+											fill="none"
+										/>
+										<path d="M15 4v8h3.586a1 1 0 0 1 .707 1.707l-6.586 6.586a1 1 0 0 1 -1.414 0l-6.586 -6.586a1 1 0 0 1 .707 -1.707h3.586v-8a1 1 0 0 1 1 -1h4a1 1 0 0 1 1 1z" />
+									</svg>
+								</button>
+							)}
+						</form>
+					</li>
+				))}
+			</ol>
+		) : (
+			<p class={body_large}>the bucket list is empty</p>
+		)
+	}
 </ProfileLayout>

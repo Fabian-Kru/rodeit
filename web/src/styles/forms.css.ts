@@ -1,4 +1,4 @@
-import { style } from '@vanilla-extract/css';
+import { globalStyle, style } from '@vanilla-extract/css';
 
 import { label_large } from 'src/styles/atomic/fonts.css.ts';
 import { colors } from 'src/styles/colors.css.ts';
@@ -42,6 +42,8 @@ export const link = style([
 export const btn = style([
 	label_large,
 	{
+		display: 'grid',
+		placeContent: 'center',
 		height: '42px',
 		paddingInline: '1rem',
 		backgroundColor: colors.verdant[100],
@@ -59,3 +61,7 @@ export const btn = style([
 		},
 	},
 ]);
+
+globalStyle(`${btn} svg`, {
+	stroke: colors.verdant[30],
+});

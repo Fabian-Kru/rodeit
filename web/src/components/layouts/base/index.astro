@@ -7,7 +7,7 @@ import { ariaCurrent } from 'src/aria_current.ts';
 
 import { nav, nav_link_container, nav_pages, nav_ul, nav_user_actions } from './index.css.ts';
 
-const user = getUser(Astro);
+const user = getUser(Astro.cookies);
 ---
 
 <!doctype html>

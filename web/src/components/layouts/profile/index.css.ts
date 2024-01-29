@@ -14,7 +14,6 @@ export const aside = style([
 	{
 		display: 'grid',
 		rowGap: '2rem',
-		alignContent: 'start',
 		paddingBlock: '2rem',
 	},
 ]);
@@ -36,8 +35,14 @@ export const main = style([
 	{
 		overflowY: 'auto',
 		display: 'grid',
+		alignContent: 'start',
+		rowGap: '2rem',
 		paddingBlock: '2rem',
 	},
 ]);
 
-export const form = style([]);
+export const form = style([
+	{
+		alignSelf: 'end',
+	},
+]);

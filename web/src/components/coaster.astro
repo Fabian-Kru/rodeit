@@ -1,0 +1,61 @@
+---
+import { assignInlineVars } from '@vanilla-extract/dynamic';
+
+import { picturesBaseUrl } from 'src/api/mod.ts';
+import { getCountryFlagUrl, CountryName } from 'src/country_flags.ts';
+import { body_large, title_medium } from 'src/styles/atomic/fonts.css.ts';
+
+import {
+	coaster_details,
+	coaster_details_image,
+	coaster_details_meta,
+	coaster_details_park,
+} from './coaster.css.ts';
+import { Coaster } from 'src/model.ts';
+
+type Props = {
+	coaster: Coaster;
+	countType?: 'ridden' | 'wanted';
+};
+
+const coaster = Astro.props.coaster;
+const countType = Astro.props.countType;
+
+function localizeCount(): string | undefined {
+	if (!coaster.count) return undefined;
+	switch (countType) {
+		case 'ridden':
+			return `Ridden ${coaster.count} time${coaster.count != 1 ? 's' : ''}`;
+		case 'wanted':
+			return `Wanted by ${coaster.count} user${coaster.count != 1 ? 's' : ''}`;
+		default:
+			return String(coaster.count);
+	}
+}
+
+const count = localizeCount();
+---
+
+<a
+	href={`/coasters/${coaster.id}`}
+	class={coaster_details}
+	style={assignInlineVars({
+		[coaster_details_image]: `url(${picturesBaseUrl}${coaster.image})`,
+	})}
+>
+	{count ? <p class={`${coaster_details_meta} ${body_large}`}>{count}</p> : <div />}
+	<div class={coaster_details_park}>
+		{
+			coaster.park?.country && (
+				<img
+					height={12}
+					width={18}
+					alt={`${coaster.park.country} flag`}
+					src={getCountryFlagUrl(coaster.park.country.slice(8) as CountryName)}
+				/>
+			)
+		}
+		<p class={body_large}>{coaster.park?.name}</p>
+	</div>
+	<p class={title_medium}>{coaster.name}</p>
+</a>
