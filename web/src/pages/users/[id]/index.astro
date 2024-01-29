@@ -62,7 +62,7 @@ const { data: bucketList } = await rodeit.GET('/bucket_list/{user_id}', {
 
 const uniqueCoasterIds = new Set<number>([
 	...records.map((record) => record.rollercoaster_id),
-	...bucketList!,
+	...(bucketList || []),
 ]);
 
 const coasters = new Map<number, Coaster>();
@@ -100,7 +100,7 @@ await Promise.all(
 				<h2 class={title_medium}>Bucket List</h2>
 				<ul class={coasters_style}>
 					{
-						bucketList!.map((coasterId) => (
+						(bucketList || []).map((coasterId) => (
 							<li>
 								<CoasterComponent coaster={coasters.get(coasterId)!} />
 							</li>

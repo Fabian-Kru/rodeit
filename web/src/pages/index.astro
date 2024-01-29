@@ -28,7 +28,7 @@ const orderByResult = safeParse(OrderBySchema, Astro.url.searchParams.get('order
 
 if (!orderByResult.success) {
 	Astro.url.searchParams.set('orderBy', 'ridden');
-	return Astro.redirect(Astro.url);
+	return Astro.redirect(`${Astro.url.pathname}${Astro.url.search}`);
 }
 
 const search = Astro.url.searchParams.get(FIELD_SEARCH);
