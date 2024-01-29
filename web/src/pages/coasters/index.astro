@@ -2,7 +2,7 @@
 import { union, literal, safeParse, Output } from 'valibot';
 
 import { rodeit, captainCoaster } from 'src/api/mod.ts';
-import BaseLayout from 'src/components/layouts/base/index.astro';
+import RootLayout from 'src/components/layouts/root.astro';
 import { getUser } from 'src/session.ts';
 import { label_large } from 'src/styles/atomic/fonts.css.ts';
 import { Coaster } from 'src/model.ts';
@@ -146,7 +146,7 @@ if (search) {
 const user = getUser(Astro.cookies);
 ---
 
-<BaseLayout>
+<RootLayout>
 	<div class={page_style}>
 		<aside class={aside}>
 			<form
@@ -212,5 +212,5 @@ const user = getUser(Astro.cookies);
 				}
 			</ol>
 		</main>
-	</div></BaseLayout
+	</div></RootLayout
 >

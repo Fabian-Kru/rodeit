@@ -1,5 +1,5 @@
 ---
-import BaseLayout from 'src/components/layouts/base/index.astro';
+import RootLayout from 'src/components/layouts/root.astro';
 import { btn, input_text, link } from 'src/styles/forms.css.ts';
 import { label_large } from 'src/styles/atomic/fonts.css.ts';
 
@@ -7,7 +7,7 @@ import { actions, form, page } from './index.css.ts';
 import { FIELD_PASSWORD, FIELD_USERNAME, FIELD_NAME, FIELD_SURNAME } from './action.ts';
 ---
 
-<BaseLayout>
+<RootLayout>
 	<div class={page}>
 		<form
 			class={form}
@@ -58,4 +58,4 @@ import { FIELD_PASSWORD, FIELD_USERNAME, FIELD_NAME, FIELD_SURNAME } from './act
 			</div>
 		</form>
 	</div>
-</BaseLayout>
+</RootLayout>

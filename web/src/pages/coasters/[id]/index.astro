@@ -1,6 +1,6 @@
 ---
 import { captainCoaster } from 'src/api/mod.ts';
-import BaseLayout from 'src/components/layouts/base/index.astro';
+import RootLayout from 'src/components/layouts/root.astro';
 import { display_medium } from 'src/styles/atomic/fonts.css.ts';
 
 const coasterId = Number(Astro.params.id);
@@ -21,8 +21,8 @@ const coaster = await captainCoaster.GET('/api/coasters/{id}', {
 });
 ---
 
-<BaseLayout>
+<RootLayout>
 	<div>
 		<h1 class={display_medium}>{coaster.data?.name}</h1>
 	</div>
-</BaseLayout>
+</RootLayout>

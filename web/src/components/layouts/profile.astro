@@ -1,13 +1,13 @@
 ---
-import BaseLayout from 'src/components/layouts/base/index.astro';
+import RootLayout from 'src/components/layouts/root.astro';
 import { label_large } from 'src/styles/atomic/fonts.css.ts';
 import { btn } from 'src/styles/forms.css.ts';
 import { ariaCurrent } from 'src/aria_current.ts';
 
-import { page, aside, aside_link, main, form } from './index.css.ts';
+import { page, aside, aside_link, main, form } from './profile.css.ts';
 ---
 
-<BaseLayout>
+<RootLayout>
 	<div class={page}>
 		<aside class={aside}>
 			<ul>
@@ -51,4 +51,4 @@ import { page, aside, aside_link, main, form } from './index.css.ts';
 			<slot />
 		</main>
 	</div>
-</BaseLayout>
+</RootLayout>
