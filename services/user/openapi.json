@@ -105,7 +105,35 @@
 				}
 			}
 		},
-		"/user/:user_id": {
+		"/user/{user_id}": {
+			"get": {
+				"tags": [
+					"crate"
+				],
+				"summary": "Get a User by ID",
+				"description": "Get a User by ID",
+				"operationId": "get_user_by_id",
+				"parameters": [
+					{
+						"name": "user_id",
+						"in": "path",
+						"required": true,
+						"schema": {
+							"type": "integer",
+							"format": "int32",
+							"minimum": 0
+						}
+					}
+				],
+				"responses": {
+					"200": {
+						"description": "operation successful"
+					},
+					"404": {
+						"description": "user not found"
+					}
+				}
+			},
 			"delete": {
 				"tags": [
 					"crate"
@@ -113,6 +141,18 @@
 				"summary": "Delete a User by ID",
 				"description": "Delete a User by ID",
 				"operationId": "delete_user",
+				"parameters": [
+					{
+						"name": "user_id",
+						"in": "path",
+						"required": true,
+						"schema": {
+							"type": "integer",
+							"format": "int32",
+							"minimum": 0
+						}
+					}
+				],
 				"responses": {
 					"200": {
 						"description": "operation successful"
@@ -137,6 +177,18 @@
 				"summary": "Update a User by ID",
 				"description": "Update a User by ID",
 				"operationId": "patch_user",
+				"parameters": [
+					{
+						"name": "user_id",
+						"in": "path",
+						"required": true,
+						"schema": {
+							"type": "integer",
+							"format": "int32",
+							"minimum": 0
+						}
+					}
+				],
 				"requestBody": {
 					"description": "",
 					"content": {
@@ -164,24 +216,6 @@
 						"jwt": []
 					}
 				]
-			}
-		},
-		"/user/:userid": {
-			"get": {
-				"tags": [
-					"crate"
-				],
-				"summary": "Get a User by ID",
-				"description": "Get a User by ID",
-				"operationId": "get_user_by_id",
-				"responses": {
-					"200": {
-						"description": "operation successful"
-					},
-					"404": {
-						"description": "user not found"
-					}
-				}
 			}
 		}
 	},
