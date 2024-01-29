@@ -16,10 +16,12 @@ import { Coaster } from 'src/model.ts';
 type Props = {
 	coaster: Coaster;
 	countType?: 'ridden' | 'wanted';
+	riddenOn?: Date;
 };
 
 const coaster = Astro.props.coaster;
 const countType = Astro.props.countType;
+const riddenOn = Astro.props.riddenOn;
 
 function localizeCount(): string | undefined {
 	if (!coaster.count) return undefined;
@@ -43,6 +45,21 @@ const count = localizeCount();
 		[coaster_details_image]: `url(${picturesBaseUrl}${coaster.image})`,
 	})}
 >
+	{
+		riddenOn && (
+			<p class={`${coaster_details_meta} ${body_large}`}>
+				{riddenOn.toLocaleString('en-GB', {
+					weekday: 'long',
+					year: 'numeric',
+					month: 'long',
+					day: 'numeric',
+					hour: '2-digit',
+					minute: '2-digit',
+					hour12: false,
+				})}
+			</p>
+		)
+	}
 	{count ? <p class={`${coaster_details_meta} ${body_large}`}>{count}</p> : <div />}
 	<div class={coaster_details_park}>
 		{

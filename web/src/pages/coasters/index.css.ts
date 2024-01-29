@@ -57,7 +57,7 @@ export const coasters = style([
 		paddingBlock: '1rem',
 		display: 'grid',
 		alignContent: 'start',
-		rowGap: '1rem',
+		rowGap: '2rem',
 	},
 	lg({
 		paddingInline: 0,

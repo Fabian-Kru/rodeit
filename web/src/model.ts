@@ -10,6 +10,6 @@ export type Coaster = {
 };
 
 export type Record = {
-	coaster?: Coaster;
+	coaster: Coaster;
 	date: Date;
 };

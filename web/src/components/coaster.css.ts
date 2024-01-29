@@ -13,7 +13,11 @@ export const coaster_details = style([
 		padding: '1rem',
 		gap: '1rem',
 		height: '12rem',
-		backgroundImage: `linear-gradient(to right top, ${colors.verdant[30]}, oklch(0% 0 0 / 0)), ${coaster_details_image}`,
+		backgroundImage: [
+			`linear-gradient(to right top, ${colors.verdant[30]}, oklch(0% 0 0 / 0) 50%)`,
+			`linear-gradient(to right bottom, ${colors.verdant[30]}, oklch(0% 0 0 / 0) 50%)`,
+			coaster_details_image,
+		].join(', '),
 		backgroundSize: 'cover',
 		backgroundPosition: 'center',
 		borderColor: colors.verdant[90],
