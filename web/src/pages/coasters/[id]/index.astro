@@ -1,14 +1,43 @@
 ---
 import { assignInlineVars } from '@vanilla-extract/dynamic';
 
-import { captainCoaster, picturesBaseUrl } from 'src/api/mod.ts';
+import { captainCoaster, picturesBaseUrl, rodeit } from 'src/api/mod.ts';
+import { Record } from 'src/model.ts';
 import RootLayout from 'src/components/layouts/root.astro';
-import { display_medium, title_medium } from 'src/styles/atomic/fonts.css.ts';
+import {
+	body_large,
+	display_medium,
+	label_large,
+	title_medium,
+} from 'src/styles/atomic/fonts.css.ts';
 import { getCountryFlagUrl, CountryName } from 'src/country_flags';
 import { btn } from 'src/styles/forms.css.ts';
 import { getUser } from 'src/session.ts';
 
-import { page, header, header_image, park, main, actions } from './index.css.ts';
+import {
+	page,
+	header,
+	header_image,
+	park,
+	main,
+	actions,
+	record as record_style,
+	records as records_style,
+	records_title,
+	social,
+	social_section,
+	stats,
+} from './index.css.ts';
+
+type FullRecord = {
+	user: {
+		id: number;
+		username: string;
+		name: string;
+		surname: string;
+	};
+	date: Date;
+};
 
 const coasterId = Number(Astro.params.id);
 
@@ -28,6 +57,47 @@ const { data: coaster } = await captainCoaster.GET('/api/coasters/{id}', {
 		},
 	},
 });
+
+const recordsResult = await rodeit.GET('/records/rollercoaster/{rollercoaster_id}', {
+	params: {
+		path: {
+			rollercoaster_id: Math.trunc(coasterId),
+		},
+	},
+});
+const recordsData = recordsResult.data as Record[] | undefined;
+
+const records =
+	recordsData &&
+	((
+		await Promise.all(
+			recordsData.map(async (record) => {
+				const { data: user } = await rodeit.GET('/users/user/{user_id}', {
+					params: {
+						path: {
+							user_id: record.user_id,
+						},
+					},
+				});
+
+				if (!user) {
+					return undefined;
+				}
+
+				const _record: FullRecord = {
+					user: {
+						id: user.id,
+						username: user.username,
+						name: user.name,
+						surname: user.surname,
+					},
+					date: new Date(record.timestamp),
+				};
+
+				return _record;
+			})
+		)
+	).filter((record) => record !== undefined) as FullRecord[]);
 ---
 
 <RootLayout>
@@ -78,6 +148,178 @@ const { data: coaster } = await captainCoaster.GET('/api/coasters/{id}', {
 					</form>
 				)
 			}
+			<div class={social}>
+				<div class={social_section}>
+					<h2 class={title_medium}>Opening Date</h2>
+					<p class={body_large}>
+						{
+							new Date(coaster?.openingDate).toLocaleDateString('en-GB', {
+								weekday: 'long',
+								year: 'numeric',
+								month: 'long',
+								day: 'numeric',
+							})
+						}
+					</p>
+					<h2 class={title_medium}>Manufacturer</h2>
+					<p class={body_large}>{coaster?.manufacturer?.name}</p>
+					<h2 class={title_medium}>Statistics</h2>
+					<ul class={stats}>
+						{
+							coaster?.length && (
+								<li>
+									<svg
+										xmlns="http://www.w3.org/2000/svg"
+										width="24"
+										height="24"
+										viewBox="0 0 24 24"
+										stroke-width="2"
+										fill="none"
+										stroke-linecap="round"
+										stroke-linejoin="round"
+									>
+										<path
+											stroke="none"
+											d="M0 0h24v24H0z"
+											fill="none"
+										/>
+										<path d="M19.875 8c.621 0 1.125 .512 1.125 1.143v5.714c0 .631 -.504 1.143 -1.125 1.143h-15.875a1 1 0 0 1 -1 -1v-5.857c0 -.631 .504 -1.143 1.125 -1.143h15.75z" />
+										<path d="M9 8v2" />
+										<path d="M6 8v3" />
+										<path d="M12 8v3" />
+										<path d="M18 8v3" />
+										<path d="M15 8v2" />
+									</svg>
+									<p class={body_large}>Length</p>
+									<p class={body_large}>{coaster.length} m</p>
+								</li>
+							)
+						}
+
+						{
+							coaster?.height && (
+								<li>
+									<svg
+										xmlns="http://www.w3.org/2000/svg"
+										style="rotate: 90deg"
+										width="24"
+										height="24"
+										viewBox="0 0 24 24"
+										stroke-width="2"
+										fill="none"
+										stroke-linecap="round"
+										stroke-linejoin="round"
+									>
+										<path
+											stroke="none"
+											d="M0 0h24v24H0z"
+											fill="none"
+										/>
+										<path d="M19.875 8c.621 0 1.125 .512 1.125 1.143v5.714c0 .631 -.504 1.143 -1.125 1.143h-15.875a1 1 0 0 1 -1 -1v-5.857c0 -.631 .504 -1.143 1.125 -1.143h15.75z" />
+										<path d="M9 8v2" />
+										<path d="M6 8v3" />
+										<path d="M12 8v3" />
+										<path d="M18 8v3" />
+										<path d="M15 8v2" />
+									</svg>
+									<p class={body_large}>Height</p>
+									<p class={body_large}>{coaster.height} m</p>
+								</li>
+							)
+						}
+
+						{
+							coaster?.speed && (
+								<li>
+									<svg
+										xmlns="http://www.w3.org/2000/svg"
+										width="24"
+										height="24"
+										viewBox="0 0 24 24"
+										stroke-width="2"
+										fill="none"
+										stroke-linecap="round"
+										stroke-linejoin="round"
+									>
+										<path
+											stroke="none"
+											d="M0 0h24v24H0z"
+											fill="none"
+										/>
+										<path d="M5.636 19.364a9 9 0 1 1 12.728 0" />
+										<path d="M16 9l-4 4" />
+									</svg>
+									<p class={body_large}>Speed</p>
+									<p class={body_large}>{coaster.speed} km/h</p>
+								</li>
+							)
+						}
+
+						{
+							coaster?.inversionsNumber && (
+								<li>
+									<svg
+										xmlns="http://www.w3.org/2000/svg"
+										width="24"
+										height="24"
+										viewBox="0 0 24 24"
+										stroke-width="2"
+										fill="none"
+										stroke-linecap="round"
+										stroke-linejoin="round"
+									>
+										<path
+											stroke="none"
+											d="M0 0h24v24H0z"
+											fill="none"
+										/>
+										<path d="M12 21v-6m0 -6v-1a4 4 0 1 0 -4 4h13" />
+										<path d="M17 16l4 -4l-4 -4" />
+									</svg>
+									<p class={body_large}>Inversions</p>
+									<p class={body_large}>{coaster.inversionsNumber}</p>
+								</li>
+							)
+						}
+					</ul>
+				</div>
+				<div class={social_section}>
+					<div class={records_title}>
+						<h2 class={title_medium}>Recent Records</h2>
+						<p class={body_large}>{records?.length} Records</p>
+					</div>
+					{
+						records && records.length > 0 && (
+							<ol class={records_style}>
+								{records.slice(0, 5).map((record) => (
+									<li>
+										<a
+											href={`/users/${record.user.id}`}
+											class={record_style}
+										>
+											<p class={body_large}>
+												{record.date.toLocaleString('en-GB', {
+													weekday: 'long',
+													year: 'numeric',
+													month: 'long',
+													day: 'numeric',
+													hour: '2-digit',
+													minute: '2-digit',
+													hour12: false,
+												})}
+											</p>
+											<p class={body_large}>
+												{record.user.name} {record.user.surname}
+											</p>
+											<div class={label_large}>{record.user.username}</div>
+										</a>
+									</li>
+								))}
+							</ol>
+						)
+					}
+				</div>
+			</div>
 		</main>
 	</div>
 </RootLayout>

@@ -2,11 +2,16 @@
 import { rodeit, captainCoaster } from 'src/api/mod.ts';
 import CoasterComponent from 'src/components/coaster.astro';
 import ProfileLayout from 'src/components/layouts/profile.astro';
-import { Record } from 'src/model.ts';
+import { Coaster, Record } from 'src/model.ts';
 import { getUser, headers } from 'src/session.ts';
 import { body_large, display_medium } from 'src/styles/atomic/fonts.css.ts';
 
 import { coaster as coaster_style, coasters } from './index.css.ts';
+
+type FullRecord = {
+	coaster: Coaster;
+	date: Date;
+};
 
 const user = getUser(Astro.cookies);
 
@@ -23,14 +28,7 @@ const result = await rodeit.GET('/records/user/{user_id}', {
 	},
 	headers: headers(Astro.cookies),
 });
-const data = result.data as
-	| Array<{
-			id: number;
-			rollercoaster_id: number;
-			timestamp: string;
-			user_id: string;
-	  }>
-	| undefined;
+const data = result.data as Record[] | undefined;
 
 const records =
 	data &&
@@ -49,7 +47,7 @@ const records =
 					return undefined;
 				}
 
-				const _record: Record = {
+				const _record: FullRecord = {
 					date: new Date(record.timestamp),
 					coaster: {
 						id: coaster.id as number,
@@ -64,7 +62,7 @@ const records =
 				return _record;
 			})
 		)
-	).filter((record) => record !== undefined) as Record[]);
+	).filter((record) => record !== undefined) as FullRecord[]);
 
 if (records) {
 	// TODO: this should be done on the server

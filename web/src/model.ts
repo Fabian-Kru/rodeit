@@ -10,6 +10,8 @@ export type Coaster = {
 };
 
 export type Record = {
-	coaster: Coaster;
-	date: Date;
+	id: number;
+	rollercoaster_id: number;
+	timestamp: string;
+	user_id: string;
 };

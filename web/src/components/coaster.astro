@@ -67,7 +67,7 @@ const count = localizeCount();
 				<img
 					height={12}
 					width={18}
-					alt={`${coaster.park.country} flag`}
+					alt={`${coaster.park.country.slice(8)} flag`}
 					src={getCountryFlagUrl(coaster.park.country.slice(8) as CountryName)}
 				/>
 			)
