@@ -40,9 +40,3 @@ export const main = style([
 		paddingBlock: '2rem',
 	},
 ]);
-
-export const form = style([
-	{
-		alignSelf: 'end',
-	},
-]);

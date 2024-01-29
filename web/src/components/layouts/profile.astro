@@ -1,10 +1,16 @@
 ---
 import RootLayout from 'src/components/layouts/root.astro';
 import { label_large } from 'src/styles/atomic/fonts.css.ts';
-import { btn } from 'src/styles/forms.css.ts';
+import { getUser } from 'src/session.ts';
 import { ariaCurrent } from 'src/aria_current.ts';
 
-import { page, aside, aside_link, main, form } from './profile.css.ts';
+import { page, aside, aside_link, main } from './profile.css.ts';
+
+const user = getUser(Astro.cookies);
+
+if (!user) {
+	return Astro.redirect('/login');
+}
 ---
 
 <RootLayout>
@@ -39,13 +45,13 @@ import { page, aside, aside_link, main, form } from './profile.css.ts';
 					</a>
 				</li>
 			</ul>
-			<form
-				class={form}
-				action="/profile/delete"
-				method="post"
+			<a
+				class={aside_link}
+				style={{ alignSelf: 'end' }}
+				href={`/users/${user.sub}`}
 			>
-				<button class={btn}>Delete Account</button>
-			</form>
+				<p class={label_large}>View Profile</p>
+			</a>
 		</aside>
 		<main class={main}>
 			<slot />

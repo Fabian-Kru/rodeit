@@ -2,10 +2,10 @@
 import { rodeit } from 'src/api/mod';
 import ProfileLayout from 'src/components/layouts/profile.astro';
 import { getUser } from 'src/session.ts';
-import { body_large, display_medium } from 'src/styles/atomic/fonts.css.ts';
+import { body_large, display_medium, title_medium } from 'src/styles/atomic/fonts.css.ts';
 import { btn, input_text } from 'src/styles/forms.css.ts';
 
-import { form } from './index.css.ts';
+import { form, alert } from './index.css.ts';
 
 import {
 	FIELD_PASSWORD,
@@ -19,6 +19,8 @@ const user = getUser(Astro.cookies);
 if (!user) {
 	return Astro.redirect('/login');
 }
+
+const updated = Astro.url.searchParams.has('updated');
 
 const result = await rodeit.GET('/users/user/{user_id}', {
 	params: {
@@ -39,6 +41,7 @@ const u = result.data as User;
 
 <ProfileLayout>
 	<h1 class={display_medium}>My Account</h1>
+	{updated && <p class:list={[body_large, alert]}>Updated successfully</p>}
 	<form
 		class={form}
 		action="/profile/update"
@@ -99,6 +102,19 @@ const u = result.data as User;
 			type="submit"
 			class={btn}
 			>Save</button
+		>
+	</form>
+	<div></div>
+	<h2 class={title_medium}>Danger Zone</h2>
+	<form
+		class={form}
+		action="/profile/delete"
+		method="post"
+	>
+		<button
+			class={btn}
+			type="submit"
+			>Delete Account</button
 		>
 	</form>
 </ProfileLayout>

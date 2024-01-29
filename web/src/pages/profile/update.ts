@@ -21,7 +21,7 @@ export async function POST({ cookies, request, redirect }: APIContext) {
 	const name = formData.get(FIELD_NAME);
 	const surname = formData.get(FIELD_SURNAME);
 
-	await rodeit.PATCH('/users/user/{user_id}', {
+	const { response } = await rodeit.PATCH('/users/user/{user_id}', {
 		params: {
 			path: {
 				user_id: Number(user.sub),
@@ -35,5 +35,10 @@ export async function POST({ cookies, request, redirect }: APIContext) {
 			surname: surname?.toString(),
 		},
 	});
-	return redirect('/profile');
+
+	if (!response.ok) {
+		return redirect('/profile');
+	}
+
+	return redirect('/profile?updated');
 }
