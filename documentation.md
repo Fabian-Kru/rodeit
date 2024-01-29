@@ -44,6 +44,11 @@
 ## Hinweise für Installation
 **Docker muss bereits installiert sein!**
 
+`Starten auf der VM:`
+1. cd /opt/gruppe1/
+2. sudo su
+3. docker compose down && docker compose up
+
 `Linux, Mac:`
 1. Im Hauptverzeichnis **"./setup.sh"** ausführen
 2. **"docker compose up"** ausführen
@@ -51,6 +56,12 @@
 `Windows:`
 1. Alle Docker Images bauen
 2. **"docker compose up"** ausführen
+
+`Zum pushen in die Registry`
+docker push gcr.hrz.tu-chemnitz.de/praktikum-scc/ws23-gruppe1/gruppe1/bucket_list:0.2.0
+docker push gcr.hrz.tu-chemnitz.de/praktikum-scc/ws23-gruppe1/gruppe1/user:0.1.0
+docker push gcr.hrz.tu-chemnitz.de/praktikum-scc/ws23-gruppe1/gruppe1/records:v1.f.a.5
+
 
 ## Plattformen
 - GitLab
@@ -127,6 +138,12 @@ Zeigt alle bekannten Coaster an. Sortierbar nach: Meiste Fahrten, Beliebtheit
 ## `/users`
 
 ## `/users/{id}`
+
+
+## `/profile/bucket_list`
+Zeigt die eigene Bucketlist, sortiert nach persönlicher Reihenfolge
+
+![](https://md.ascii.coffee/uploads/4628bf4d-89a6-479a-b657-26edb71ba4d6.png)
 
 
 ## Feedback
