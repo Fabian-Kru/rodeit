@@ -1,6 +1,6 @@
 services:
   records:
-    image: "gcr.hrz.tu-chemnitz.de/praktikum-scc/ws23-gruppe1/gruppe1/records:v1.f.a.0"
+    image: "gcr.hrz.tu-chemnitz.de/praktikum-scc/ws23-gruppe1/gruppe1/records:v1.f.a.5"
     volumes:
       - /db/records.db:/app/db
     ports:
@@ -9,7 +9,7 @@ services:
       - JWT_TOKEN=iqEHyCjfqRRrI2ctKFxgjfqzIqfobKgt
   user:
     build: ./services/user/
-    image: "gcr.hrz.tu-chemnitz.de/praktikum-scc/ws23-gruppe1/gruppe1/user:0.0.2"
+    image: "gcr.hrz.tu-chemnitz.de/praktikum-scc/ws23-gruppe1/gruppe1/user:0.1.0"
     volumes:
       - ./db/:/db
     ports:
@@ -24,3 +24,7 @@ services:
       - "3000:3000"
     environment:
       - RODEIT_SECRET=iqEHyCjfqRRrI2ctKFxgjfqzIqfobKgt
+  web:
+    image: "gcr.hrz.tu-chemnitz.de/praktikum-scc/ws23-gruppe1/gruppe1/web:0.1.6"
+    ports:
+      - "8080:8080"
